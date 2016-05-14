@@ -4,10 +4,10 @@
 
 One of the first thing
 
-#####1.1 [From openFrameworks to Cinder.](/101 oFAppStructure/src)
-If we were to compare oF and Cinder in terms of app structure, one of the main difference we could note is in the way the source file(s) are organised.  
+#####1.1. [From openFrameworks to Cinder.](/101 oFAppStructure/src)
+If we were to compare oF and Cinder in terms of app structure, one of the main difference we could note is the way the source file(s) are organised.  
 
-Openframeworks use the really common `main.cpp` file to write the entry of the application and next to it usually splits the main application source into a `ofApp.h` header and a `ofApp.cpp` implementation file.  
+Openframeworks use the really common approach of having a `main.cpp` file to write the entry of the application and next to it a `ofApp.h` header and a `ofApp.cpp` implementation file for the main application source code.  
 
 `main.cpp`
 ```c++
@@ -89,16 +89,19 @@ void ofApp::draw()
 
 Even if the two versions are really similar in a way, there's one striking difference and it is definitely more of a design choice than a value difference. openFrameworks seems to be designed to be simple and easy to read for non-programmers while Cinder is written using a really standard and modern form of C++.  
   
-It's not a big deal, and doesn't change much for the user but the first obvious thing is how the `main` function is implemented. Where oF made it much simpler (and avoiding unecessary questions like "why does the main function returns an int or has those weird arguments") Cinder is sticking to the standard way of writing a `main` function.
+It's not a big deal, and doesn't change much for the user but another obvious thing is how the `main` function is implemented. Where oF made it much simpler (and probably avoiding unecessary questions like "why does the main function returns an int or why does it have those weird arguments") Cinder is sticking to the standard way of writing a `main` function. Not a big deal but much more standard compliant.  
   
-Here's what Bjarne Stroustrups and the ISOCPP say about this:  
+Here's what Bjarne Stroustrups and the ISOCPP say about this; Stroustrups is actually much more strict about it:
+> "The definition `void main() { /* ... */ }` is not and never has been C++, nor has it even been C."  
+
 http://www.stroustrup.com/bs_faq2.html#void-main  
 https://isocpp.org/wiki/faq/newbie#main-returns-int  
 
-**All that said we don't really have to care about this as both libraries ship with a project generator that takes care of generating this structure for us.**  
+**All that said I would say that we don't really have to care about this as both libraries ship with a handy project generator that takes care of generating this structure for us.**
+___
 
-#####1.2 [Cinder App Structure.](/102 CinderAppStructure/)
-Cinder has an even simpler approach to structuring the source files and the app structure as all the above is usually merged into one single file. IMO this allows faster prototyping as you don't need to go back and forth between files to write a simple application.  
+#####1.2. [Cinder App Structure.](/102 CinderAppStructure/src/CinderAppStructure.cpp)
+Cinder has an even simpler approach to structuring the source files and the app structure. As all the above is usually merged into one single file. IMO this allows faster prototyping as you don't need to go back and forth between files to write a simple application.  
 
 At some point when the application grow bigger I sometimes split it into a header and implementation file, but I'm usually happy with the base structure. It also makes sharing snippet and small test cases much easier as they can live in a single gist page.  
   
@@ -131,8 +134,9 @@ void CinderApp::draw()
 
 CINDER_APP( CinderApp, RendererGl )
 ```
+___
 
-#####1.3 [App constructor, destructor and cleanup method.](/103 AppConstructor/)
+#####1.3. [App constructor, destructor and cleanup method.](/103 AppConstructor/src/AppConstructorApp.cpp)
 Cinder is quite flexible in terms of how you structure your app and how the different component of the app get initialized and cleaned up. Not overriding the `setup` function and using a constructor instead is totally fine:  
 ```c++
 #include "cinder/app/App.h"
@@ -194,8 +198,53 @@ void AppConstructorApp::cleanup()
 }
 CINDER_APP( AppConstructorApp, RendererGl )
 ```
+___
 
-#####1.4 [Events.](/104 AppEvents/)
+#####1.4. [App Settings.](/104 AppSettings/src/AppSettingsApp.cpp)
+Cinder also provides a series of functions to setup the app the way you want. Change the window position, set it fullscreen, add a window title, etc...  
+
+It is fine to set this up in the app constructor or setup method: 
+```c++
+void CinderApp::setup()
+{
+	setWindowPos( ivec2( 20, 300 ) );
+	setWindowSize( ivec2( 200, 20 ) );
+}
+```
+But most of the time you want to access more specific settings, want those settings to be set before the app actually starts (and avoid any unwantend flickering) or simply want to do it the proper/cleaner way. The `CINDER_APP` macro accepts a third argument that is the prepareSettings function. It can be a free-standing/static function or a lambda.  
+```c++
+CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
+	settings->setWindowSize( ivec2( 200, 20 ) );
+	settings->setTitle( "App Settings" );
+	settings->setResizable( false );
+})
+```
+
+This is a bit less compact and elegant but it does exactly the same but with a static function: 
+```c++
+void mySettings( App::Settings *settings )
+{
+	settings->setWindowSize( ivec2( 200, 60 ) );
+	settings->setTitle( "App Settings" );
+	settings->setResizable( false );
+}
+CINDER_APP( AppSettings, RendererGl, mySettings )
+```
+
+The settings function could also be used for more specific/advanced settings. For example you could decide to start the app on the secondary display if more than one display is detected:  
+```c++
+CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
+	auto displays = Display::getDisplays();
+	settings->setDisplay( displays.size() > 1 ? displays[1] : displays[0] );
+})
+```
+
+The `CINDER_APP` macro also provides a way to specify options for the **OpenGL Renderer**. Such as the desired version, the amount of antialiasing or the presence of a stencil buffer for example :  
+```c++
+// this will create a renderer with a multisample anti aliasing of 16 and a stencil buffer
+CINDER_APP( AppSettings, RendererGl( RendererGl::Options().msaa( 16 ).stencil() )
+```  
+#####1.5. [Events.](/105 AppEvents/src/AppEventsApp.cpp)
 Cinder's [AppBase class](https://github.com/cinder/Cinder/blob/master/include/cinder/app/AppBase.h) provides a series of method you can override to receive the base events of your app and the app's window events. It is the easiest way of subscribing to most events in your app :
 ```c++
 #include "cinder/app/App.h"
@@ -248,10 +297,12 @@ public:
 
 CINDER_APP( AppEventsApp, RendererGl )
 ```
+___
 
-#####1.5 [App Settings.](/105 AppSettings/)
-#####1.6 [Extra flexibility with signals](/101 oFAppStructure/)
-#####1.7 [Multiple Windows](/101 oFAppStructure/)
+#####1.6. [Extra flexibility with signals](/106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
+
+___
+#####1.7. [Multiple Windows](/101 oFAppStructure/)
 
 ___
 ####2. Cinder App Structure
