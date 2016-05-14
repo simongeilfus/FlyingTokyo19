@@ -1,7 +1,15 @@
-# FlyingTokyo19
+# FlyingTokyo 19 : An Introduction to Cinder, Hot-Reloading and Runtime-Compiled C++
+
+First thing first; Please clone this repository, start the install script and go grab yourself a cup of coffee (this is going to clone, build and install Cinder, Llvm, Clang, Cling and other smaller piece of code ... it is going to take a while!) :  
+```shell
+git clone https://github.com/simongeilfus/FlyingTokyo19.git
+cd FlyingTokyo19
+sh install.sh
+```
+___
 
 ### Table of contents
-1. Short introduction to Cinder
+1. [Short introduction to Cinder](#1-short-introduction-to-cinder)
   1. [From openFrameworks to Cinder.](#11-from-openframeworks-to-cinder)
   2. [Cinder App Structure.](#12-cinder-app-structure)
   3. [App constructor, destructor and cleanup method.](#13-app-constructor-destructor-and-cleanup-method)
@@ -9,6 +17,9 @@
   5. [Events.](#15-events)
   6. [Extra flexibility with signals](#16-extra-flexibility-with-signals)
   7. [Multiple Windows](#17-multiple-windows)
+  8. [Object Oriented Design](#18-object-oriented-design)
+2. [Modern C++](#2-modern-c)
+  1. [Auto keyword and type inference.](#21-auto-keyword-and-type-inference)
 
 ___
 
@@ -110,7 +121,8 @@ http://www.stroustrup.com/bs_faq2.html#void-main
 https://isocpp.org/wiki/faq/newbie#main-returns-int  
 
 **All that said I would say that we don't really have to care about this as both libraries ship with a handy project generator that takes care of generating this structure for us.**
-___
+
+
 
 #####1.2. [Cinder App Structure.](apps/102 CinderAppStructure/src/CinderAppStructure.cpp)
 Cinder has a really simple approach to structuring the source files and the app structure. The code mentionned above is usually merged into one single file. IMO this allows faster prototyping as you don't need to go back and forth between files to write a simple application.  
@@ -148,7 +160,6 @@ void CinderApp::draw()
 
 CINDER_APP( CinderApp, RendererGl )
 ```
-___
 
 #####1.3. [App constructor, destructor and cleanup method.](apps/103 AppConstructor/src/AppConstructorApp.cpp)
 Cinder is quite flexible in terms of how you structure your app and how the different component of the app get initialized and cleaned up. Not overriding the `setup` function and using a constructor instead is totally fine:  
@@ -212,7 +223,7 @@ void AppConstructorApp::cleanup()
 }
 CINDER_APP( AppConstructorApp, RendererGl )
 ```
-___
+
 
 #####1.4. [App Settings.](apps/104 AppSettings/src/AppSettingsApp.cpp)
 Cinder also provides a series of functions to setup the app the way you want. Change the window position, set it fullscreen, add a window title, etc... It is fine to set this up in the app constructor or setup method:   
@@ -256,6 +267,7 @@ The `CINDER_APP` macro also provides a way to specify options for the **OpenGL R
 // this will create a renderer with a multisample anti aliasing of 16 and a stencil buffer
 CINDER_APP( AppSettings, RendererGl( RendererGl::Options().msaa( 16 ).stencil() )
 ```  
+
 #####1.5. [Events.](apps/105 AppEvents/src/AppEventsApp.cpp)
 Cinder's [AppBase class](https://github.com/cinder/Cinder/blob/master/include/cinder/app/AppBase.h) provides a series of method you can override to receive the base events of your app and the app's window events. It is the easiest way of subscribing to most events in your app :
 ```c++
@@ -309,7 +321,6 @@ public:
 
 CINDER_APP( AppEventsApp, RendererGl )
 ```
-___
 
 #####1.6. [Extra flexibility with signals](apps/106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
 Cinder offers another level of flexibility in how you deal with the app events thanks to its use of "signals". IMO Cinder's signal implementation is based on the best available out there.  
@@ -375,7 +386,7 @@ void Button::draw()
 }
 
 ```
-___
+
 #####1.7. [Multiple Windows](apps/107 MultipleWindow/src/MultipleWindowApp.cpp)
 Adding more than one window to your app works the same way. You can use the `createWindow` shortcut from anywhere in your code, or do it in the prepareSettings function with `App::Settings::prepareWindow` :
 
@@ -453,7 +464,6 @@ CINDER_APP( MultipleWindowApp, RendererGl, []( App::Settings *settings ) {
 })
 ```
 
-___
 #####1.8. Object Oriented Design   
 Another big difference worth mentioning between Cinder and other libraries such as Processing or openFrameworks is the Object Oriented approach in the design of the library. As we've seen previously seen Cinder is indeed providing a long list of classes that are used everywhere in the library.  
 
@@ -465,91 +475,80 @@ This approach becomes obvious when you look at Cinder's graphic API and even mor
 
 
 ___
-###2. C++11
-C++11 (and C++14) has brought a great number of very nice new features to the standard and Cinder makes extensive use of of them.  
+###2. Modern C++
+C++11 (and C++14) has brought a great number of very nice new features to the standard and Cinder makes extensive use of of them. This section will focus on how Cinder might differ from other frameworks in the way it uses C++. It will also give a quick introduction to some of the principle introduced recently in the standard.    
 
-#####2.1. [Auto keyword and type inference.](apps/)
+I would strongly advise to have a look to [David Wicks / sansumbrella.com](http://sansumbrella.com/) amazing ["A Soso Tour of Cpp"](https://github.com/sosolimited/Cpp-Handbook/blob/master/tour-of-cpp.md) if you want a longer introduction on the subject.  
+
+#####2.1. [Namespaces.](apps/)
+Namespaces can't really be called a modern feature but as we have seen previously Cinder relies a lot on them. Namespaces are just a convenient way to group sections of code. It allows us to stick to most logical names for classes and functions without caring too much about name conflicts.
+```c++
+namespace MyLibrary {
+	struct vec2 {
+		float x, y;
+	};
+}
+```
+From there you can access the `vec2` type by writting `MyLibrary::vec2` or by adding a `using namespace MyLibrary`. As `vec2` might be a common choice of name in other libraries, this ensures that we won't have any issues using them in the same project.    
+**A good habit is to never add `using namespace` in a header file and leave them exclusively to the .cpp files.**
+
+
+#####2.2. [Auto keyword and type inference.](apps/)
 C++ is a strongly typed language meaning that, unlike dynamic languages like JavaScript, you have to give a type to the variable you create (hence the abscence of a `var` keywords like in JS). The introduction of type inference slighly changes that while retaining the safety of a strongly typed language.  
 
 Type inference is the ability of the compiler to automatically deduce the types of your variables.  
 ```c++
-auto someFloat 			= 123.456f;
-auto anEmptyRectangle	= Rectf();
+auto someNumber 		= 123.456f;	// the compiler will see this as a float
+auto someOtherNumber 	= 789.012;	// the compiler will see this as a double
+auto anEmptyRectangle	= Rectf();	// the compiler will see this as a Rectf
 ```
 It sometimes makes the code more readable and in other case saves you from writting very long types. Let's say that we have a map of texture format that we want to iterate:    
 ```c++
+// C++11 allows us to write what we used to write like this:
 std::map<string,gl::Texture2d::Format>::iterator it = mTextures.begin();
-```
-C++11 allows to write the same like this:  
-```c++
+// In a much shorter way
 auto it = mTextures.begin();
 ```
+#####2.3. [Range-based loops.](apps/)
+Another really nice new feature in C++11 are Range-Based loops. A Range-For allows you to iterate through the "range" of a container. Basically any standard container that has a `begin()` and a `end()` can be used in a Range-For. It relies on type inference as well and uses the `auto` keyword we've seen previously.  
+```c++
+vector<float> numbers;
+for( auto number : numbers ) {
+	console() << number << endl;
+}
+```
+Again it is especially usefull when using types with a long name: 
+```c++
+// This long and hard to read for loop
+for( std::map<string,gl::Texture2d::Format>::iterator it = mTextures.begin(); it != mTextures.end(); ++it ) {
+}
+// could be written as:
+for( auto texture : mTextures ) {
+}
+```
+
+#####2.2. [Const-correctness and parameter passing.](apps/)
+#####2.3. [Override keyword.](apps/)
+#####2.3. [Smart Pointers and the ::create pattern.](apps/)
+`unique_ptr`: should be used when ownership of a memory resource does not have to be shared (it doesn't have a copy constructor), but it can be transferred to another `unique_ptr` (move constructor exists).
+`shared_ptr`: should be used when ownership of a memory resource should be shared (hence the name).
+`weak_ptr`: holds a reference to an object managed by a `shared_ptr`, but does not contribute to the reference count; it is used to break dependency cycles (think of a tree where the parent holds an owning reference (shared_ptr) to its children, but the children also must hold a reference to the parent; if this second reference was also an owning one, a cycle would be created and no object would ever be released).
+#####2.3. [std::function and Lambdas.](apps/)
 
 ___
 ###3. Graphics
 
 Cinder now has excellent documentation and a few great guide to get you started. [The OpenGL guide](https://libcinder.org/docs/guides/opengl/) is definitely the place to start if you need some introduction to OpenGL.
 
-Since Cinder 0.9 the default version of OpenGL is 3.2 Core Profile on desktop and OpenGL ES 2.0 and 3.0 on mobile. Recent versions of OpenGL have changed drastically while more or less abandoning the [fixed function pipeline](https://www.opengl.org/wiki/Fixed_Function_Pipeline) and the old immediate-mode rendering.
+Since Cinder 0.9 the default version of OpenGL is 3.2 Core Profile on desktop and OpenGL ES 2.0 and 3.0 on mobile. Recent versions of OpenGL have changed drastically while more or less abandoning the [fixed function pipeline](https://www.opengl.org/wiki/Fixed_Function_Pipeline) and the old immediate-mode rendering. In two sentences; all the `glBegin`/`glVertex`/`glEnd` we (wrongly) conceived as convenient before are gone and the (ugly) shading pipeline we had easily access to using `glEnable(GL_LIGHTING)` or `glLightfv(GL_LIGHT0, GL_AMBIENT, ambient )` is gone as well.  
 
 Hopefully Cinder provides a great API and a set of tools to help us understand those changes without having to write a single line of OpenGL.
 
 #####3.1. [Helpers functions and the gl::namespace.](/)
 
+2D Convenience Functions:
 ```c++
-//! Draws the VboMesh \a mesh. Consider a gl::Batch as a faster alternative. Optionally specify a \a first vertex index and a \a count of vertices.
-void draw( const VboMeshRef &mesh, GLint first = 0, GLsizei count = -1 );
-//! Draws a Texture2d \a texture, fitting it to \a dstRect. Ignores currently bound shader.
-void draw( const Texture2dRef &texture, const Rectf &dstRect );
-//! Draws a subregion \a srcArea of a Texture (expressed as upper-left origin pixels).
-void draw( const Texture2dRef &texture, const Area &srcArea, const Rectf &dstRect );
-void draw( const Texture2dRef &texture, const vec2 &dstOffset = vec2() );
-void draw( const PolyLine2 &polyLine );
-void draw( const PolyLine3 &polyLine );
-//! Draws a Path2d \a pathd using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc
-void draw( const Path2d &path, float approximationScale = 1.0f );
-//! Draws a Shaped2d \a shaped using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc
-void draw( const Shape2d &shape, float approximationScale = 1.0f );
-//! Draws a TriMesh \a mesh at the origin. Currently only uses position and index information.
-void draw( const TriMesh &mesh );
-//! Draws a geom::Source \a source at the origin.
-void draw( const geom::Source &source );
-
-//! Draws a CubeMapTex \a texture inside \a rect with an equirectangular projection. If \a lod is non-default then a specific mip-level is drawn. Typical aspect ratio should be 2:1.
-void drawEquirectangular( const gl::TextureCubeMapRef &texture, const Rectf &r, float lod = -1 );
-//! Draws a CubeMapTex \a texture as a horizontal cross, fit inside \a rect. If \a lod is non-default then a specific mip-level is drawn. Typical aspect ratio should be 4:3.
-void drawHorizontalCross( const gl::TextureCubeMapRef &texture, const Rectf &rect, float lod = -1 );
-//! Draws a CubeMapTex \a texture as a vertical cross, fit inside \a rect. If \a lod is non-default then a specific mip-level is drawn. Typical aspect ratio should be 3:4.
-void drawVerticalCross( const gl::TextureCubeMapRef &texture, const Rectf &rect, float lod = -1 );
-
-//! Draws a solid (filled) Path2d \a path using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc. Performance warning: This routine tesselates the polygon into triangles. Consider using Triangulator directly.
-void drawSolid( const Path2d &path2d, float approximationScale = 1.0f );
-//! Draws a solid (filled) Shape2d \a shape using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc. Performance warning: This routine tesselates the polygon into triangles. Consider using Triangulator directly.
-void drawSolid( const Shape2d &shape, float approximationScale = 1.0f );
-void drawSolid( const PolyLine2 &polyLine );
-
-//! Renders a solid cube centered at \a center of size \a size. Normals and created texture coordinates are generated.
-void drawCube( const vec3 &center, const vec3 &size );
-//! Renders a solid cube centered at \a center of size \a size. Each face is assigned a unique color.
-void drawColorCube( const vec3 &center, const vec3 &size );
-//! Renders a stroked cube centered at \a center of size \a size.
-void drawStrokedCube( const vec3 &center, const vec3 &size );
-//! Renders a stroked cube using \a box as the guide for center and size.
-inline void drawStrokedCube( const ci::AxisAlignedBox &box ) { drawStrokedCube( box.getCenter(), box.getSize() ); }
-//! Renders a solid \a sphere, subdivided on both longitude and latitude into \a subdivisions.
-void drawSphere( const Sphere &sphere, int subdivisions = -1 );
-//! Renders a solid sphere at \a center of radius \a radius, subdivided on both longitude and latitude into \a subdivisions.
-void drawSphere( const vec3 &center, float radius, int subdivisions = -1 );
-//! Draws a textured quad of size \a scale that is aligned with the vectors \a bbRight and \a bbUp at \a pos, rotated by \a rotationRadians around the vector orthogonal to \a bbRight and \a bbUp.
-void drawBillboard( const vec3 &pos, const vec2 &scale, float rotationRadians, const vec3 &bbRight, const vec3 &bbUp, const Rectf &texCoords = Rectf( 0, 0, 1, 1 ) );
-//! Renders a stroked representation of \a cam
-void drawFrustum( const Camera &cam );
-void drawCoordinateFrame( float axisLength = 1.0f, float headLength = 0.2f, float headRadius = 0.05f );
-//! Draws a vector starting at \a start and ending at \a end. An arrowhead is drawn at the end of radius \a headRadius and length \a headLength.
-void drawVector( const vec3 &start, const vec3 &end, float headLength = 0.2f, float headRadius = 0.05f );
-
 //! Draws a line between points a and b
-void drawLine( const vec3 &a, const vec3 &b );
 void drawLine( const vec2 &a, const vec2 &b );
 
 //! Draws \a texture on the XY-plane
@@ -587,4 +586,30 @@ void drawSolidTriangle( const vec2 &pt0, const vec2 &pt1, const vec2 &pt2 );
 void drawSolidTriangle( const vec2 &pt0, const vec2 &pt1, const vec2 &pt2, const vec2 &texPt0, const vec2 &texPt1, const vec2 &texPt2 );
 //! Renders a textured triangle.
 void drawSolidTriangle( const vec2 pts[3], const vec2 texCoord[3] = nullptr );
+```
+
+3d Convenience Functions:
+```c++
+//! Renders a solid cube centered at \a center of size \a size. Normals and created texture coordinates are generated.
+void drawCube( const vec3 &center, const vec3 &size );
+//! Renders a solid cube centered at \a center of size \a size. Each face is assigned a unique color.
+void drawColorCube( const vec3 &center, const vec3 &size );
+//! Renders a stroked cube centered at \a center of size \a size.
+void drawStrokedCube( const vec3 &center, const vec3 &size );
+//! Renders a stroked cube using \a box as the guide for center and size.
+inline void drawStrokedCube( const ci::AxisAlignedBox &box ) { drawStrokedCube( box.getCenter(), box.getSize() ); }
+//! Renders a solid \a sphere, subdivided on both longitude and latitude into \a subdivisions.
+void drawSphere( const Sphere &sphere, int subdivisions = -1 );
+//! Renders a solid sphere at \a center of radius \a radius, subdivided on both longitude and latitude into \a subdivisions.
+void drawSphere( const vec3 &center, float radius, int subdivisions = -1 );
+//! Draws a textured quad of size \a scale that is aligned with the vectors \a bbRight and \a bbUp at \a pos, rotated by \a rotationRadians around the vector orthogonal to \a bbRight and \a bbUp.
+void drawBillboard( const vec3 &pos, const vec2 &scale, float rotationRadians, const vec3 &bbRight, const vec3 &bbUp, const Rectf &texCoords = Rectf( 0, 0, 1, 1 ) );
+//! Renders a stroked representation of \a cam
+void drawFrustum( const Camera &cam );
+void drawCoordinateFrame( float axisLength = 1.0f, float headLength = 0.2f, float headRadius = 0.05f );
+//! Draws a vector starting at \a start and ending at \a end. An arrowhead is drawn at the end of radius \a headRadius and length \a headLength.
+void drawVector( const vec3 &start, const vec3 &end, float headLength = 0.2f, float headRadius = 0.05f );
+
+//! Draws a line between points a and b
+void drawLine( const vec3 &a, const vec3 &b );
 ```
