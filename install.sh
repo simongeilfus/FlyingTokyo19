@@ -23,8 +23,13 @@ git clone https://github.com/simongeilfus/Cinder-Runtime.git
 git clone https://github.com/simongeilfus/Watchdog.git
 git clone --recursive https://github.com/simongeilfus/Cinder-ImGui.git
 git clone https://github.com/simongeilfus/SimplexNoise.git
+git clone https://github.com/simongeilfus/SpacePartitioning.git
 git clone --recursive https://github.com/simongeilfus/Cinder-Cereal.git
 
 # Install Cinder-Runtime
 cd Cinder-Runtime
 sh install.sh
+
+# Add a shortcut to TinderBox
+cd ../../..
+ln -s cinder/tools/TinderBox-Mac/TinderBox.app
