@@ -1,3 +1,4 @@
+#pragma once
 #include "cinder/app/App.h"
 
 class ofApp : public ci::app::App {
