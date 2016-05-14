@@ -4,7 +4,7 @@
 
 One of the first thing
 
-#####1.1. [From openFrameworks to Cinder.](/101 oFAppStructure/src)
+#####1.1. [From openFrameworks to Cinder.](101 oFAppStructure/src)
 If we were to compare oF and Cinder in terms of app structure, one of the main difference we could note is the way the source file(s) are organised.  
 
 Openframeworks use the really common approach of having a `main.cpp` file to write the entry of the application and next to it a `ofApp.h` header and a `ofApp.cpp` implementation file for the main application source code.  
@@ -47,7 +47,7 @@ void ofApp::draw()
 
 If you forget about cosmetics and don't get too much into details both Cinder and oF work the same in terms of general app structure. They both have a main entry point and a `App` class from which all apps inherit.  
   
-You can see a [here cinder app organised using oF approach to structuring the source code](/101 oFAppStructure/). Both are extremely similar when organising the code that way :
+You can see a [here cinder app organised using oF approach to structuring the source code](101 oFAppStructure/src). Both are extremely similar when organising the code that way :
 
 `main.cpp`
 ```c++
@@ -100,7 +100,7 @@ https://isocpp.org/wiki/faq/newbie#main-returns-int
 **All that said I would say that we don't really have to care about this as both libraries ship with a handy project generator that takes care of generating this structure for us.**
 ___
 
-#####1.2. [Cinder App Structure.](/102 CinderAppStructure/src/CinderAppStructure.cpp)
+#####1.2. [Cinder App Structure.](102 CinderAppStructure/src/CinderAppStructure.cpp)
 Cinder has a really simple approach to structuring the source files and the app structure. The code mentionned above is usually merged into one single file. IMO this allows faster prototyping as you don't need to go back and forth between files to write a simple application.  
 
 It keeps things simple and centralized and makes sharing code snippets and small test cases much easier as they can live in a single gist page (for example most snippet here can be copy and pasted in any project and will work straight away).  
@@ -138,7 +138,7 @@ CINDER_APP( CinderApp, RendererGl )
 ```
 ___
 
-#####1.3. [App constructor, destructor and cleanup method.](/103 AppConstructor/src/AppConstructorApp.cpp)
+#####1.3. [App constructor, destructor and cleanup method.](103 AppConstructor/src/AppConstructorApp.cpp)
 Cinder is quite flexible in terms of how you structure your app and how the different component of the app get initialized and cleaned up. Not overriding the `setup` function and using a constructor instead is totally fine:  
 ```c++
 #include "cinder/app/App.h"
@@ -202,7 +202,7 @@ CINDER_APP( AppConstructorApp, RendererGl )
 ```
 ___
 
-#####1.4. [App Settings.](/104 AppSettings/src/AppSettingsApp.cpp)
+#####1.4. [App Settings.](104 AppSettings/src/AppSettingsApp.cpp)
 Cinder also provides a series of functions to setup the app the way you want. Change the window position, set it fullscreen, add a window title, etc... It is fine to set this up in the app constructor or setup method:   
 ```c++
 void CinderApp::setup()
@@ -244,7 +244,7 @@ The `CINDER_APP` macro also provides a way to specify options for the **OpenGL R
 // this will create a renderer with a multisample anti aliasing of 16 and a stencil buffer
 CINDER_APP( AppSettings, RendererGl( RendererGl::Options().msaa( 16 ).stencil() )
 ```  
-#####1.5. [Events.](/105 AppEvents/src/AppEventsApp.cpp)
+#####1.5. [Events.](105 AppEvents/src/AppEventsApp.cpp)
 Cinder's [AppBase class](https://github.com/cinder/Cinder/blob/master/include/cinder/app/AppBase.h) provides a series of method you can override to receive the base events of your app and the app's window events. It is the easiest way of subscribing to most events in your app :
 ```c++
 #include "cinder/app/App.h"
@@ -299,7 +299,7 @@ CINDER_APP( AppEventsApp, RendererGl )
 ```
 ___
 
-#####1.6. [Extra flexibility with signals](/106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
+#####1.6. [Extra flexibility with signals](106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
 Cinder offers another level of flexibility in how you deal with the app events thanks to its use of "signals". IMO Cinder's signal implementation is based on the best available out there.  
 It allows you to structure things exactly the way you want : 
 ```c++
@@ -364,7 +364,7 @@ void Button::draw()
 
 ```
 ___
-#####1.7. [Multiple Windows](/107 MultipleWindow/src/MultipleWindowApp.cpp)
+#####1.7. [Multiple Windows](107 MultipleWindow/src/MultipleWindowApp.cpp)
 Adding more than one window to your app works the same way. You can use the `createWindow` shortcut from anywhere in your code, or do it in the prepareSettings function with `App::Settings::prepareWindow` :
 
 ```c++
