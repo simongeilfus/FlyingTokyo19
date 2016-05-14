@@ -1,1 +1,33 @@
 CinderProject
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Mac OS X cruft
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.user
+*.xcworkspace/
+xcuserdata/
+.DS_Store
+
+build/
+
+# Windows cruft
+*.suo
+*.ncb
+*.sdf
+*.opensdf
+Debug/
+Release/
+ipch/
+
+
+# Executables
+*.exe
+*.out
+*.app
