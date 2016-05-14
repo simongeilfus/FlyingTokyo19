@@ -1,6 +1,17 @@
 # FlyingTokyo19
 
-####1. Short introduction to Cinder
+1. Short introduction to Cinder
+  1. [From openFrameworks to Cinder.](#11-from-openframeworks-to-cinder)
+  2. [Cinder App Structure.](#12-cinder-app-structure)
+  3. [App constructor, destructor and cleanup method.](#13-app-constructor-destructor-and-cleanup-method)
+  4. [App Settings.](#14-app-settings)
+  5. [Events.](#15-events)
+  6. [Extra flexibility with signals](#16-extra-flexibility-with-signals)
+  7. [Multiple Windows](#17-multiple-windows)
+
+___
+
+###1. Short introduction to Cinder
 
 One of the first thing
 
@@ -441,6 +452,138 @@ CINDER_APP( MultipleWindowApp, RendererGl, []( App::Settings *settings ) {
 })
 ```
 
+___
+#####1.8. Object Oriented Design   
+Another big difference worth mentioning between Cinder and other libraries such as Processing or openFrameworks is the Object Oriented approach in the design of the library. As we've seen previously seen Cinder is indeed providing a long list of classes that are used everywhere in the library.  
+
+So when Processing's `background` or openFrameworks `ofBackground` methods accepts a series of`floats` describing the different channels of the clear color; Cinder's equivalent `gl::clear` accepts a `Color` or `ColorA` objects.  
+
+The same can be said of Processing `rect( x, y, w, h )` and openFrameworks `ofDrawRectangle( x, y, w, h )` where Cinder version would look like `gl::drawSolidRect( Rectf( x1, y1, x2, y2 ) )`. (I think openFrameworks's `ofDrawRectangle(const ofRectangle &r)` has only been added in recent versions).  
+
+This approach becomes obvious when you look at Cinder's graphic API and even more when looking at its OpenGL abstraction layer.  
+
 
 ___
-####2. Cinder App Structure
+###2. C++11
+C++11 (and C++14) has brought a great number of very nice new features to the standard and Cinder makes extensive use of of them.  
+
+#####2.1. [Auto keyword and type inference.](/)
+C++ is a strongly typed language meaning that, unlike dynamic languages like JavaScript, you have to give a type to the variable you create (hence the abscence of a `var` keywords like in JS). The introduction of type inference slighly changes that while retaining the safety of a strongly typed language.  
+
+Type inference is the ability of the compiler to automatically deduce the types of your variables.  
+```c++
+auto someFloat 			= 123.456f;
+auto anEmptyRectangle	= Rectf();
+```
+It sometimes makes the code more readable and in other case saves you from writting very long types. Let's say that we have a map of texture format that we want to iterate:    
+```c++
+std::map<string,gl::Texture2d::Format>::iterator it = mTextures.begin();
+```
+C++11 allows to write the same like this:  
+```c++
+auto it = mTextures.begin();
+```
+
+___
+###3. Graphics
+
+Cinder now has excellent documentation and a few great guide to get you started. [The OpenGL guide](https://libcinder.org/docs/guides/opengl/) is definitely the place to start if you need some introduction to OpenGL.
+
+Since Cinder 0.9 the default version of OpenGL is 3.2 Core Profile on desktop and OpenGL ES 2.0 and 3.0 on mobile. Recent versions of OpenGL have changed drastically while more or less abandoning the [fixed function pipeline](https://www.opengl.org/wiki/Fixed_Function_Pipeline) and the old immediate-mode rendering.
+
+Hopefully Cinder provides a great API and a set of tools to help us understand those changes without having to write a single line of OpenGL.
+
+#####3.1. [Helpers functions and the gl::namespace.](/)
+
+```c++
+//! Draws the VboMesh \a mesh. Consider a gl::Batch as a faster alternative. Optionally specify a \a first vertex index and a \a count of vertices.
+void draw( const VboMeshRef &mesh, GLint first = 0, GLsizei count = -1 );
+//! Draws a Texture2d \a texture, fitting it to \a dstRect. Ignores currently bound shader.
+void draw( const Texture2dRef &texture, const Rectf &dstRect );
+//! Draws a subregion \a srcArea of a Texture (expressed as upper-left origin pixels).
+void draw( const Texture2dRef &texture, const Area &srcArea, const Rectf &dstRect );
+void draw( const Texture2dRef &texture, const vec2 &dstOffset = vec2() );
+void draw( const PolyLine2 &polyLine );
+void draw( const PolyLine3 &polyLine );
+//! Draws a Path2d \a pathd using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc
+void draw( const Path2d &path, float approximationScale = 1.0f );
+//! Draws a Shaped2d \a shaped using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc
+void draw( const Shape2d &shape, float approximationScale = 1.0f );
+//! Draws a TriMesh \a mesh at the origin. Currently only uses position and index information.
+void draw( const TriMesh &mesh );
+//! Draws a geom::Source \a source at the origin.
+void draw( const geom::Source &source );
+
+//! Draws a CubeMapTex \a texture inside \a rect with an equirectangular projection. If \a lod is non-default then a specific mip-level is drawn. Typical aspect ratio should be 2:1.
+void drawEquirectangular( const gl::TextureCubeMapRef &texture, const Rectf &r, float lod = -1 );
+//! Draws a CubeMapTex \a texture as a horizontal cross, fit inside \a rect. If \a lod is non-default then a specific mip-level is drawn. Typical aspect ratio should be 4:3.
+void drawHorizontalCross( const gl::TextureCubeMapRef &texture, const Rectf &rect, float lod = -1 );
+//! Draws a CubeMapTex \a texture as a vertical cross, fit inside \a rect. If \a lod is non-default then a specific mip-level is drawn. Typical aspect ratio should be 3:4.
+void drawVerticalCross( const gl::TextureCubeMapRef &texture, const Rectf &rect, float lod = -1 );
+
+//! Draws a solid (filled) Path2d \a path using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc. Performance warning: This routine tesselates the polygon into triangles. Consider using Triangulator directly.
+void drawSolid( const Path2d &path2d, float approximationScale = 1.0f );
+//! Draws a solid (filled) Shape2d \a shape using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc. Performance warning: This routine tesselates the polygon into triangles. Consider using Triangulator directly.
+void drawSolid( const Shape2d &shape, float approximationScale = 1.0f );
+void drawSolid( const PolyLine2 &polyLine );
+
+//! Renders a solid cube centered at \a center of size \a size. Normals and created texture coordinates are generated.
+void drawCube( const vec3 &center, const vec3 &size );
+//! Renders a solid cube centered at \a center of size \a size. Each face is assigned a unique color.
+void drawColorCube( const vec3 &center, const vec3 &size );
+//! Renders a stroked cube centered at \a center of size \a size.
+void drawStrokedCube( const vec3 &center, const vec3 &size );
+//! Renders a stroked cube using \a box as the guide for center and size.
+inline void drawStrokedCube( const ci::AxisAlignedBox &box ) { drawStrokedCube( box.getCenter(), box.getSize() ); }
+//! Renders a solid \a sphere, subdivided on both longitude and latitude into \a subdivisions.
+void drawSphere( const Sphere &sphere, int subdivisions = -1 );
+//! Renders a solid sphere at \a center of radius \a radius, subdivided on both longitude and latitude into \a subdivisions.
+void drawSphere( const vec3 &center, float radius, int subdivisions = -1 );
+//! Draws a textured quad of size \a scale that is aligned with the vectors \a bbRight and \a bbUp at \a pos, rotated by \a rotationRadians around the vector orthogonal to \a bbRight and \a bbUp.
+void drawBillboard( const vec3 &pos, const vec2 &scale, float rotationRadians, const vec3 &bbRight, const vec3 &bbUp, const Rectf &texCoords = Rectf( 0, 0, 1, 1 ) );
+//! Renders a stroked representation of \a cam
+void drawFrustum( const Camera &cam );
+void drawCoordinateFrame( float axisLength = 1.0f, float headLength = 0.2f, float headRadius = 0.05f );
+//! Draws a vector starting at \a start and ending at \a end. An arrowhead is drawn at the end of radius \a headRadius and length \a headLength.
+void drawVector( const vec3 &start, const vec3 &end, float headLength = 0.2f, float headRadius = 0.05f );
+
+//! Draws a line between points a and b
+void drawLine( const vec3 &a, const vec3 &b );
+void drawLine( const vec2 &a, const vec2 &b );
+
+//! Draws \a texture on the XY-plane
+void drawSolidRect( const Rectf &r, const vec2 &upperLeftTexCoord = vec2( 0, 1 ), const vec2 &lowerRightTexCoord = vec2( 1, 0 ) );
+//! Draws a solid rounded rectangle centered around \a rect, with a corner radius of \a cornerRadius
+void drawSolidRoundedRect( const Rectf &r, float cornerRadius, int numSegmentsPerCorner = 0,  const vec2 &upperLeftTexCoord = vec2( 0, 1 ), const vec2 &lowerRightTexCoord = vec2( 1, 0 ) );
+//! Draws a filled circle centered around \a center with a radius of \a radius. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
+void drawSolidCircle( const vec2 &center, float radius, int numSegments = -1 );
+//! Draws a filled ellipse centered around \a center with an X-axis radius of \a radiusX and a Y-axis radius of \a radiusY. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
+void drawSolidEllipse( const vec2 &center, float radiusX, float radiusY, int numSegments = -1 );
+
+//! Draws a stroked rectangle with dimensions \a rect.
+void drawStrokedRect( const Rectf &rect );
+//! Draws a stroked rectangle centered around \a rect, with a line width of \a lineWidth
+void drawStrokedRect( const Rectf &rect, float lineWidth );
+//! Draws a stroked rounded rectangle centered around \a rect, with a corner radius of \a cornerRadius
+void drawStrokedRoundedRect( const Rectf &rect, float cornerRadius, int numSegmentsPerCorner = 0 );
+//! Draws a stroked circle centered around \a center with a radius of \a radius. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
+void drawStrokedCircle( const vec2 &center, float radius, int numSegments = -1 );
+//! Draws a stroked circle centered around \a center with a radius of \a radius and a line width of \a lineWidth. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
+void drawStrokedCircle( const vec2 &center, float radius, float lineWidth, int numSegments = -1 );
+//! Draws a stroked ellipse centered around \a center with an X-axis radius of \a radiusX and a Y-axis radius of \a radiusY.  Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
+void drawStrokedEllipse( const vec2 &center, float radiusX, float radiusY, int numSegments = -1 );
+
+//! Draws a string \a str with its lower left corner located at \a pos. Optional \a font and \a color affect the style.
+void drawString( const std::string &str, const vec2 &pos, const ColorA &color = ColorA( 1, 1, 1, 1 ), Font font = Font() );
+//! Draws a string \a str with the horizontal center of its baseline located at \a pos. Optional \a font and \a color affect the style
+void drawStringCentered( const std::string &str, const vec2 &pos, const ColorA &color = ColorA( 1, 1, 1, 1 ), Font font = Font() );
+//! Draws a right-justified string \a str with the center of its  located at \a pos. Optional \a font and \a color affect the style
+void drawStringRight( const std::string &str, const vec2 &pos, const ColorA &color = ColorA( 1, 1, 1, 1 ), Font font = Font() );
+
+//! Renders a solid triangle.
+void drawSolidTriangle( const vec2 &pt0, const vec2 &pt1, const vec2 &pt2 );
+//! Renders a textured triangle.
+void drawSolidTriangle( const vec2 &pt0, const vec2 &pt1, const vec2 &pt2, const vec2 &texPt0, const vec2 &texPt1, const vec2 &texPt2 );
+//! Renders a textured triangle.
+void drawSolidTriangle( const vec2 pts[3], const vec2 texCoord[3] = nullptr );
+```
