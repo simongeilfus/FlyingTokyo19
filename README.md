@@ -6,6 +6,9 @@ git clone https://github.com/simongeilfus/FlyingTokyo19.git
 cd FlyingTokyo19
 sh install.sh
 ```
+
+[https://www.dropbox.com/s/cm84m5halg54p5p/lib.zip?dl=0](https://www.dropbox.com/s/cm84m5halg54p5p/lib.zip?dl=0)
+
 ___
 
 ### Table of contents
