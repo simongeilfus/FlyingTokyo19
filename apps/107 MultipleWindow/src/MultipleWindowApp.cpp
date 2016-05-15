@@ -27,10 +27,10 @@ MultipleWindowApp::MultipleWindowApp()
 void MultipleWindowApp::mouseDown( MouseEvent event )
 {
 	// create a new window next to the one that received a mouseDown event
-	auto windowPos = getWindowPos();
-	auto window = createWindow( Window::Format().pos( windowPos + ivec2( 256, 0 ) ).size( ivec2( 256 ) ) );
+	auto windowPos	= getWindowPos();
+	auto window		= createWindow( Window::Format().pos( windowPos + ivec2( 256, 0 ) ).size( ivec2( 256 ) ) );
 	// pick a random color in our palette and clear the new window with it
-	Color randColor = mColorPalette[randInt(0, 5)];
+	auto randColor	= mColorPalette[randInt(0, 5)];
 	window->getSignalDraw().connect( [randColor](){ gl::clear( randColor ); } );
 }
 

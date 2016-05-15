@@ -15,17 +15,42 @@ ___
   3. [App constructor, destructor and cleanup method.](#13-app-constructor-destructor-and-cleanup-method)
   4. [App Settings.](#14-app-settings)
   5. [Events.](#15-events)
-  6. [Extra flexibility with signals](#16-extra-flexibility-with-signals)
-  7. [Multiple Windows](#17-multiple-windows)
-  8. [Object Oriented Design](#18-object-oriented-design)
-2. [Modern C++](#2-modern-c)
-  1. [Auto keyword and type inference.](#21-auto-keyword-and-type-inference)
+  6. [Extra flexibility with signals.](#16-extra-flexibility-with-signals)
+  7. [Multiple Windows.](#17-multiple-windows)
+  8. [Object Oriented Design.](#18-object-oriented-design)
+2. [Modern C++ and Cinder](#2-modern-c-and-cinder)
+  1. [Namespaces.](#21-namespaces)
+  2. [Auto keyword and type inference.](#22-auto-keyword-and-type-inference)
+  3. [Range-based loops.](#23-range-based-loops)
+  4. [Const-correctness and parameter passing.](#24-const-correctness-and-parameter-g)
+  5. [Override keyword.](#25-override-keyword)
+  6. [Lambdas, std::function and std::bind.](#26-lambdas-stdfunction-and-stdbind)
+  7. [Smart Pointers and Cinder's "create pattern".](#27-smart-pointers-and-cinders-e-pattern)
+3. [User Interface](#3-user-interface)
+  1. [Cinder's Params.](#31-cinders-params)
+  2. [Immediate mode UI.](#32-immediate-mode-ui)
+4. [Graphics](#4-graphics)
+  1. [Helpers functions and the gl::namespace.](#41-helpers-functions-and-the-glnamespace)
+  2. [Vertex Batch and TriMesh.](#42-vertex-batch-and-trimesh)
+  3. [Batch.](#43-batch)
+  4. [States and Scoped Objects.](#44-states-and-scoped-objects)
+  5. [Images, Surfaces and gl::Textures.](#45-images-surfaces-and-gltextures)
+  6. [Hot-Reloading Images.](#46-hot-reloading-images)
+  7. [Stock Shaders.](#47-stock-shaders)
+  8. [Importing 3D Models.](#48-importing-3d-models)
+  9. [Texturing 3D Models.](#49-texturing-3d-models)
+  10. [Hot-Reloading Model and Textures.](#410-hot-reloading-model-and-textures)
+  11. [Custom Glsl Program.](#411-custom-glsl-program)
+  12. [Hot-Reloading Glsl Programs.](#412-hot-reloading-glsl-programs)
+5. [Runtime-Compiled C++](#5-runtime-compiled-c)
 
 ___
 
 ###1. Short introduction to Cinder
 
-One of the first thing
+> [Cinder is a C++ library for programming with aesthetic intent - the sort of development often called creative coding. This includes domains like graphics, audio, video, and computational geometry. Cinder is cross-platform, with official support for OS X, Windows, iOS, and WinRT.](https://libcinder.org/about)
+
+> [Cinder is production-proven, powerful enough to be the primary tool for professionals, but still suitable for learning and experimentation.](https://libcinder.org/about)
 
 #####1.1. [From openFrameworks to Cinder.](apps/101 oFAppStructure/src)
 If we were to compare oF and Cinder in terms of app structure, one of the main difference we could note is the way the source file(s) are organised.  
@@ -70,7 +95,7 @@ void ofApp::draw()
 
 If you forget about cosmetics and don't get too much into details both Cinder and oF work the same in terms of general app structure. They both have a main entry point and a `App` class from which all apps inherit.  
   
-You can see a [here cinder app organised using oF approach to structuring the source code](apps/101 oFAppStructure/src). Both are extremely similar when organising the code that way :
+You can see [here a cinder app organised using oF approach to structuring the source code](apps/101 oFAppStructure/src). Both are extremely similar when organising the code that way :
 
 `main.cpp`
 ```c++
@@ -243,7 +268,7 @@ CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
 })
 ```
 
-This is a bit less compact and elegant but it does exactly the same but with a static function: 
+This is a bit less compact and elegant but it does exactly the same with a static function: 
 ```c++
 void mySettings( App::Settings *settings )
 {
@@ -322,8 +347,8 @@ public:
 CINDER_APP( AppEventsApp, RendererGl )
 ```
 
-#####1.6. [Extra flexibility with signals](apps/106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
-Cinder offers another level of flexibility in how you deal with the app events thanks to its use of "signals". IMO Cinder's signal implementation is based on the best available out there.  
+#####1.6. [Extra flexibility with signals.](apps/106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
+Cinder offers another level of flexibility in how you deal with the app events thanks to its use of "signals". IMO Cinder's signal implementation is based on the best available out there. It is fast, reliable and well designed.  
 It allows you to structure things exactly the way you want : 
 ```c++
 #include "cinder/app/App.h"
@@ -387,7 +412,7 @@ void Button::draw()
 
 ```
 
-#####1.7. [Multiple Windows](apps/107 MultipleWindow/src/MultipleWindowApp.cpp)
+#####1.7. [Multiple Windows.](apps/107 MultipleWindow/src/MultipleWindowApp.cpp)
 Adding more than one window to your app works the same way. You can use the `createWindow` shortcut from anywhere in your code, or do it in the prepareSettings function with `App::Settings::prepareWindow` :
 
 ```c++
@@ -464,7 +489,7 @@ CINDER_APP( MultipleWindowApp, RendererGl, []( App::Settings *settings ) {
 })
 ```
 
-#####1.8. Object Oriented Design   
+#####1.8. Object Oriented Design.   
 Another big difference worth mentioning between Cinder and other libraries such as Processing or openFrameworks is the Object Oriented approach in the design of the library. As we've seen previously seen Cinder is indeed providing a long list of classes that are used everywhere in the library.  
 
 So when Processing's `background` or openFrameworks `ofBackground` methods accepts a series of`floats` describing the different channels of the clear color; Cinder's equivalent `gl::clear` accepts a `Color` or `ColorA` objects.  
@@ -475,10 +500,10 @@ This approach becomes obvious when you look at Cinder's graphic API and even mor
 
 
 ___
-###2. Modern C++
-C++11 (and C++14) has brought a great number of very nice new features to the standard and Cinder makes extensive use of of them. This section will focus on how Cinder might differ from other frameworks in the way it uses C++. It will also give a quick introduction to some of the principle introduced recently in the standard.    
+###2. Modern C++ and Cinder
+C++11 (and C++14) has brought a great number of very nice new features to the standard and Cinder makes extensive use of them. This section will focus on how Cinder might differ from other frameworks in the way it uses C++. This sections will also give a short overview of some of the principles introduced recently in the standard.    
 
-I would strongly advise to have a look to [David Wicks / sansumbrella.com](http://sansumbrella.com/) amazing ["A Soso Tour of Cpp"](https://github.com/sosolimited/Cpp-Handbook/blob/master/tour-of-cpp.md) if you want a longer introduction on the subject.  
+I would strongly advise to have a look to [David Wicks / sansumbrella.com](http://sansumbrella.com/) amazing ["A Soso Tour of Cpp"](https://github.com/sosolimited/Cpp-Handbook/blob/master/tour-of-cpp.md) if you want a more complete introduction on the subject.  
 
 #####2.1. [Namespaces.](apps/)
 Namespaces can't really be called a modern feature but as we have seen previously Cinder relies a lot on them. Namespaces are just a convenient way to group sections of code. It allows us to stick to most logical names for classes and functions without caring too much about name conflicts.
@@ -527,89 +552,307 @@ for( auto texture : mTextures ) {
 }
 ```
 
-#####2.2. [Const-correctness and parameter passing.](apps/)
-#####2.3. [Override keyword.](apps/)
-#####2.3. [Smart Pointers and the ::create pattern.](apps/)
-`unique_ptr`: should be used when ownership of a memory resource does not have to be shared (it doesn't have a copy constructor), but it can be transferred to another `unique_ptr` (move constructor exists).
-`shared_ptr`: should be used when ownership of a memory resource should be shared (hence the name).
-`weak_ptr`: holds a reference to an object managed by a `shared_ptr`, but does not contribute to the reference count; it is used to break dependency cycles (think of a tree where the parent holds an owning reference (shared_ptr) to its children, but the children also must hold a reference to the parent; if this second reference was also an owning one, a cycle would be created and no object would ever be released).
-#####2.3. [std::function and Lambdas.](apps/)
+#####2.4. [Const-correctness and parameter passing.](apps/)
 
+We could write a book about const-correctness and parameter passing in C++ but in very short this is just a good habit to take. It will make your code more readable, self-documented, safer and sometimes more efficient. `Const` basically allows to state and make it clear to yourself and others when something should not be changed or modified. This is something you will see a lot in Cinder.  
+
+Internet is full of articles on this subject but probably the easiest thing to remember is the 4 following points : 
+
+- Pass an argument by value when it is a **built-in type or a small object** (Passing by value makes a *copy of the object*) : 
+```c++
+void firstFunction( int number, bool boolean );
+```
+- Pass an argument by reference when you want the argument to be **read-write**:
+```c++
+void secondFunction( Rectf &rectangle );
+```
+- Pass an argument by const reference when you want the argument to be **read-only** (Read-only also ensure that your data *won't be unecessarely copied* when calling the function).
+```c++
+void thirdFunction( const vector<gl::Texture> &textures );
+```
+
+Only a quick glance at those 3 functions arguments is enough to know what the functions will do with the objects you pass to them.  
+
+- When writting a class's method that doesn't modify the content of the class mark it as 'const'.
+```c++
+class MyClass {
+public:
+	string getName() const;	
+};
+```
+
+#####2.5. [Override keyword.](apps/)
+
+The `override` keyword was introduce recently in c++ and using it is another good habit to take. We've seen it used in most apps snippets above and its main purpose is to ensure that you make less mistakes when overriding methods. Adding this keyword after a function clearly states that your intent is to override an existing method of the base class. If the method doesn't exist in the base class, you'll get a nice and clear compile-time error.    
+
+```c++
+class CinderApp : public App {
+public:
+	void setup() override;
+	void cleaanup() override; // compile-time error ! (cleaanup doesn't exist in App).
+};
+```
+
+
+#####2.6. [Lambdas, std::function and std::bind.](apps/)
+Lambdas and `std::function` are great additions to the standard. We've seen them used previously in the App Settings and Signals sections. A `std::function` is a standard way of representing a reference to a function. They are used to easily pass around callbacks and functions. Unlike traditional function pointers, `std::function` is short, simple and easy to remember. Just pass the signature of the function as the parameter of the template :   
+
+```c++
+void registerCallback( const function<void()> &callback );
+void registerMouseEvent( const function<bool(MouseEvent event)> &event );
+```
+Lambdas is going just a step further and allows us to write an anonymous function as we would write any variable.  
+```c++
+auto divideByTen = []( float &i ) {
+	i /= 10.0f;
+};
+console() << divideByTen( 100.0f ) << endl; // output 10.0f
+```
+
+Syntax of lambda functions is not really complicated but introduce some unusual combination of characters :
+```
+[ capture-list ] ( params ) { body }
+[ capture-list ] ( params ) -> ret { body } 
+```
+
+The capture-list comes from the fact that lambdas have their own private scope and are not aware of the context they are written in or what was declared before them. For that reason there is different approaches to passing objects to a lambda scope, as there is different approaches to passing arguments to a function.  
+	
+	- [] captures nothing 
+	- [this] captures the this pointer by value
+	- [a,&b] where a is captured by value and b is captured by reference.
+	- [=] captures all automatic variables odr-used in the body of the lambda by value
+	- [&] captures all automatic variables odr-used in the body of the lambda by reference
+
+`std::bind` simply allows (among other things) to bind together an object and a member function in an easy and standard way.
+```c++
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
+#include "cinder/gl/gl.h"
+
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+
+void registerCallback( const function<void()> &callback );
+
+class CinderApp : public App {
+public:
+    CinderApp();
+    void callBack() {}
+};
+
+CinderApp::CinderApp()
+{
+	auto callback = bind( &CinderApp::callback, this );
+	registerCallback( callback );
+}
+CINDER_APP( CinderApp, RendererGl )
+```
+
+#####2.7. [Smart Pointers and Cinder's "create pattern".](apps/)
+Cinder relies **a lot** on `shared_ptr`. Unlike other languages C++ doesn't have any *Garbage Collection* system; You have to take care of how you create objects, how do you reserve memory and how do you release it when it's not needed anymore. Fortunately for us C++11 introduced a set of tools to make this much more easy.
+
+**unique_ptr** : The most basic one is the `unique_ptr` that you can see as the usual pointer but where the memory will be automatically released when the object goes out of scope.
+
+```c++
+{
+	auto ptr = unique_ptr<Type>( new Type() );
+	...
+} // ptr destructor is called and memory is released
+```
+
+C++14 complete this new class by providing the `make_unique` method:
+```c++
+{
+	auto ptr = make_unique<Type>();
+	...
+} // ptr destructor is called and memory is released
+```
+
+**shared_ptr** : Another tool and probably the most commonly used one is the `shared_ptr` class. `shared_ptrs` are used for objects that are going to be shared a lot across the application (hence *shared* in the name). Unlike a `unique_ptr`, a `shared_ptr` doesn't get released when it goes out of scope but when all the references of the object are destroyed. Or when the number of references to the object reach zero.   
+```c++
+// When passed to this function the shared_ptr is copied and the number of reference to the object increase, but just for the duration of this function.
+void function( const shared_ptr<Object> &obj ) // obj.refcount++
+{
+}  // obj.refcount--
+
+void anotherFunction() {
+	// We create a shared_ptr of the Object type; it's the first reference
+	// to the object so its reference count is equal to one.
+	auto ptr = make_shared<Object>(); // ptr.refcount = 1
+	{
+		// we make a copy of it
+		auto ptr2 = ptr; // ptr.refcount = 2	
+	} // ptr2 went out of scope and its destructor is called. ptr.refcount goes back to 1
+
+	// We pass ptr to the other function making a copy of it
+	// that get straight away destroyed. Leaving the refcount at one.
+	function( ptr ); // ptr.refcount = 1
+} 
+// ptr destructor is called and ptr.refcount finally reach zero.
+// At that point the actual Object destructor is called and the memory is finally released.
+```
+You can see them being used in a lot of places in Cinder in the form of typedefs. Any Type that ends with a *Ref* in its name is actually a `shared_ptr` (the Ref suffix is short for reference counted object); `WindowRef`, `DisplayRef`, `gl::Texture2dRef`, `gl::VboRef`, etc...    
+
+You'll usually find in the header where the Object is defined a typedef and most of the time a static method in the class to allow to easily instanciate the `shared_ptr`:  
+```c++
+typedef shared_ptr<class Object> ObjectRef;
+class Object {
+public:
+	static ObjectRef create();
+};
+```
+
+**weak_ptr** : `weak_ptrs` are a bit less common, and are used in parallel of a `shared_ptr` to hold a *weak reference* to it. A `weak_ptr` doesn't contribute to the *refcount* of its `shared_ptr`. It is most of the time used to break dependency cycles (ex. let's say you have a tree where each node has a `shared_ptr` to each of their children. If the children also *own* the reference to their parent with a `shared_ptr`, you'll create a cycle and nothing will ever be released. Slightly more difficult to explain or understand but their use is very specific and much more rare than the two other kinds of smart pointers).
+
+#####2.8. [Method chaining, Format and Options.](apps/)
+Method chaining has nothing new or modern but is worth mentioning as it is used in a lot of places as well in Cinder. Method chaining is some sort of syntactic sugar that allows to call a series of method in a single expression or line. It can usually been seen in Cinder with setters of certain small classes. Most `Options` or `Format` classes has this syntactic sugar.  
+```c++
+// We've seen it previously used with the `Window::Format` class, where :
+auto windowFormat0 = Window::Format().size( ivec2( 256 ) ).pos( ivec2( 0, 40 ).title( "WindowTitle" );
+
+// Replaces the longer : 
+auto windowFormat1 = Window::Format();
+windowFormat1.setSize( ivec2( 256 ) );
+windowFormat1.setPosition( ivec2( 0, 40 ) );
+windowFormat1.setTitle( "WindowTitle" );
+
+// And can of course be used as the argument of a function :
+createWindow( windowFormat1 );
+createWindow( Window::Format().size( ivec2( 256 ) ).pos( ivec2( 0, 40 ).title( "WindowTitle" ) );
+``` 
+
+It is usually implemented simply by having short versions of setters methods that instead of being of the `void` type return a reference to the object itself :
+```c++
+class Options {
+public :
+	void setName( const string &name ) { mName = name; }
+	void setPosition( const vec2 &pos ) { mPosition = pos; }
+	void setRadius( float radius ) { mRadius = radius; }
+
+	Options& name( const string &name ) { mName = name; return *this; }
+	Options& position( const vec2 &pos ) { mPosition = pos; return *this; }
+	Options& radius( float radius ) { mRadius = radius; return *this; }
+};
+
+auto option = Options().name( "Pastrami" ).position( vec2( 10.0f ) ).radius( 1.25f );
+
+```
 ___
-###3. Graphics
+###3. User Interface
+The very first actual user of User Interfaces is the developer. For that reason and because in a lot of cases you need a way to interact with the app and be able to test thing out; an easy to use UI library is a must.  
 
-Cinder now has excellent documentation and a few great guide to get you started. [The OpenGL guide](https://libcinder.org/docs/guides/opengl/) is definitely the place to start if you need some introduction to OpenGL.
+#####3.1. [Cinder's Params.](#31-cinders-params)
+Cinder wraps [**anttweakbar**](http://anttweakbar.sourceforge.net/doc/), a small OpenGL library that despites it weird look, does the job pretty well. It is easy to use and provides all sort of small widgets to tweak values in your application. It is definitely not designed to create the final user interface but perfectly fit the role of a developer tool.   
+```c++
+mParams = params::InterfaceGl::create( "Params", ivec2( 200, 120 ) );
+mParams->addParam( "Color", &mSomeColor );
+mParams->addParam( "Number", &mSomeFloat ).min( 0.0f ).max( 10.0f );
+mParams->addParam( "Orientation", &mSomeQuaternion );
+```
+
+#####3.2. [Immediate mode UI.](#32-immediate-mode-ui)
+[Dear ImGui](https://github.com/ocornut/imgui) is another small library written by Omar Cornut with more or less the same goal. Providing developers a fast and easy way of creating small tools and testing interfaces. It is very flexible, has a huge number of widgets and is definitely both much more complete and better looking than *anttweakbar*.  
+
+The main difference with *anttweakbar* is in the fact that *Dear ImGui* is designed as a **Immediate Mode User Interface** library. Instead of initializing your UI when the application starts, you write your UI code in the main loop, repeating UI states every frame, like you would do when rendering graphics. Think of it as a some sort of equivalent to a Immediate Mode Graphic API. It seems a bit weird at first but it's extremly powerfull and flexible.  
+
+```c++
+void CinderApp::setup()
+{
+	// initialize Dear ImGui
+	ui::initialize();
+}
+void CinderApp::update()
+{
+	// add a slider
+ 	ui::SliderFloat( "Slider", &mSomeFloat );
+ 	// and a button
+ 	if( ui::Button( "Button" ) ) {
+ 		console() << "Button has been clicked!" << endl;
+ 	}
+}
+```
+One really nice thing with a state-less UI, is the fact that it can really easily reflect the state of your app without any extra-work. Let say that you have a vector of Objects that can be created, deleted or modified: 
+
+```c++
+void CinderApp::update()
+{
+	// Iterate over the current list of objects
+ 	for( auto object : mObjects ) {
+		ui::Text( object->getName() );
+		auto color = object->getColor();
+		if( ui::ColorEdit4( "Color", &color[0] ) ) {
+			object->setColor( color );
+		}
+		auto pos = object->getPosition();
+		if( ui::DragFloat3( "Position", &pos[0] ) ) {
+			object->setPosition( pos );
+		}
+	}
+}
+```  
+___
+###4. Graphics
+
+Cinder now has some excellent documentation and a few great guides to get you started. [The OpenGL guide](https://libcinder.org/docs/guides/opengl/) is definitely the place to start if you need some introduction to OpenGL in Cinder.
 
 Since Cinder 0.9 the default version of OpenGL is 3.2 Core Profile on desktop and OpenGL ES 2.0 and 3.0 on mobile. Recent versions of OpenGL have changed drastically while more or less abandoning the [fixed function pipeline](https://www.opengl.org/wiki/Fixed_Function_Pipeline) and the old immediate-mode rendering. In two sentences; all the `glBegin`/`glVertex`/`glEnd` we (wrongly) conceived as convenient before are gone and the (ugly) shading pipeline we had easily access to using `glEnable(GL_LIGHTING)` or `glLightfv(GL_LIGHT0, GL_AMBIENT, ambient )` is gone as well.  
 
 Hopefully Cinder provides a great API and a set of tools to help us understand those changes without having to write a single line of OpenGL.
 
-#####3.1. [Helpers functions and the gl::namespace.](/)
+#####4.1. [Helpers functions and the gl::namespace.](/)
 
-2D Convenience Functions:
+The gl namespace can be split into two series of files, functions and classes. The first one is a series of free-standing functions that wrap opengl functions ([`cinder/gl/wrapper.h`](https://github.com/cinder/Cinder/blob/master/include/cinder/gl/wrapper.h)) or that add short tools that allows to quickly sketch graphics ([`cinder/gl/draw.h`](https://github.com/cinder/Cinder/blob/master/include/cinder/gl/draw.h)). The later is not intended to be performant but is really usefull because it allows us to rapidly write prototypes or debug graphics without the need to use `VBOS`, `VAOS` and `Glsl Programs`.  
+
+You'll find a series of 2D convenience functions like `drawLine, drawSolidRect, drawSolidRoundedRect, drawSolidCircle, drawSolidEllipse, drawStrokedRect, drawStrokedRect, drawStrokedRoundedRect, drawStrokedCircle, drawStrokedCircle, drawStrokedEllipse, drawString, drawStringCentered, drawStringRight, ...` and 3d convenience functions like  `drawCube, drawColorCube, drawStrokedCube, drawStrokedCube, drawSphere, drawSphere, drawBillboard, drawFrustum, drawCoordinateFrame, drawVector, drawLine,...`.
+
+The second type of tools you'll find in the `gl namespace` is a series of classes that abstract OpenGL functionalities. They go from basic things like `Buffers` and `Queries` to higher level objects like `VboMesh`, `TextureFont` or `Batch`.
+
+#####4.2. [Vertex Batch and TriMesh.](/)
+
+Immediate mode rendering (`glBegin`, `glVertex`, `glEnd`) was a mistake in the design of older version of OpenGL and it gave us all bad habits in terms of how to communicate with a GPU. That said, there is still some small occasions where this kind of tools can be usefull when sketching things out or debugging. For this reason Cinder provides a small classes that mimics the way it used to work.  
 ```c++
-//! Draws a line between points a and b
-void drawLine( const vec2 &a, const vec2 &b );
-
-//! Draws \a texture on the XY-plane
-void drawSolidRect( const Rectf &r, const vec2 &upperLeftTexCoord = vec2( 0, 1 ), const vec2 &lowerRightTexCoord = vec2( 1, 0 ) );
-//! Draws a solid rounded rectangle centered around \a rect, with a corner radius of \a cornerRadius
-void drawSolidRoundedRect( const Rectf &r, float cornerRadius, int numSegmentsPerCorner = 0,  const vec2 &upperLeftTexCoord = vec2( 0, 1 ), const vec2 &lowerRightTexCoord = vec2( 1, 0 ) );
-//! Draws a filled circle centered around \a center with a radius of \a radius. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
-void drawSolidCircle( const vec2 &center, float radius, int numSegments = -1 );
-//! Draws a filled ellipse centered around \a center with an X-axis radius of \a radiusX and a Y-axis radius of \a radiusY. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
-void drawSolidEllipse( const vec2 &center, float radiusX, float radiusY, int numSegments = -1 );
-
-//! Draws a stroked rectangle with dimensions \a rect.
-void drawStrokedRect( const Rectf &rect );
-//! Draws a stroked rectangle centered around \a rect, with a line width of \a lineWidth
-void drawStrokedRect( const Rectf &rect, float lineWidth );
-//! Draws a stroked rounded rectangle centered around \a rect, with a corner radius of \a cornerRadius
-void drawStrokedRoundedRect( const Rectf &rect, float cornerRadius, int numSegmentsPerCorner = 0 );
-//! Draws a stroked circle centered around \a center with a radius of \a radius. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
-void drawStrokedCircle( const vec2 &center, float radius, int numSegments = -1 );
-//! Draws a stroked circle centered around \a center with a radius of \a radius and a line width of \a lineWidth. Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
-void drawStrokedCircle( const vec2 &center, float radius, float lineWidth, int numSegments = -1 );
-//! Draws a stroked ellipse centered around \a center with an X-axis radius of \a radiusX and a Y-axis radius of \a radiusY.  Default \a numSegments requests a conservative (high-quality but slow) number based on radius.
-void drawStrokedEllipse( const vec2 &center, float radiusX, float radiusY, int numSegments = -1 );
-
-//! Draws a string \a str with its lower left corner located at \a pos. Optional \a font and \a color affect the style.
-void drawString( const std::string &str, const vec2 &pos, const ColorA &color = ColorA( 1, 1, 1, 1 ), Font font = Font() );
-//! Draws a string \a str with the horizontal center of its baseline located at \a pos. Optional \a font and \a color affect the style
-void drawStringCentered( const std::string &str, const vec2 &pos, const ColorA &color = ColorA( 1, 1, 1, 1 ), Font font = Font() );
-//! Draws a right-justified string \a str with the center of its  located at \a pos. Optional \a font and \a color affect the style
-void drawStringRight( const std::string &str, const vec2 &pos, const ColorA &color = ColorA( 1, 1, 1, 1 ), Font font = Font() );
-
-//! Renders a solid triangle.
-void drawSolidTriangle( const vec2 &pt0, const vec2 &pt1, const vec2 &pt2 );
-//! Renders a textured triangle.
-void drawSolidTriangle( const vec2 &pt0, const vec2 &pt1, const vec2 &pt2, const vec2 &texPt0, const vec2 &texPt1, const vec2 &texPt2 );
-//! Renders a textured triangle.
-void drawSolidTriangle( const vec2 pts[3], const vec2 texCoord[3] = nullptr );
+auto vertBatch = gl::VertBatch::create();
+vertBatch->begin( GL_POINTS );
+for( auto p : mPoints ) {
+	vertBatch->vertex( p );
+}
+vertBatch->draw();  
 ```
 
-3d Convenience Functions:
-```c++
-//! Renders a solid cube centered at \a center of size \a size. Normals and created texture coordinates are generated.
-void drawCube( const vec3 &center, const vec3 &size );
-//! Renders a solid cube centered at \a center of size \a size. Each face is assigned a unique color.
-void drawColorCube( const vec3 &center, const vec3 &size );
-//! Renders a stroked cube centered at \a center of size \a size.
-void drawStrokedCube( const vec3 &center, const vec3 &size );
-//! Renders a stroked cube using \a box as the guide for center and size.
-inline void drawStrokedCube( const ci::AxisAlignedBox &box ) { drawStrokedCube( box.getCenter(), box.getSize() ); }
-//! Renders a solid \a sphere, subdivided on both longitude and latitude into \a subdivisions.
-void drawSphere( const Sphere &sphere, int subdivisions = -1 );
-//! Renders a solid sphere at \a center of radius \a radius, subdivided on both longitude and latitude into \a subdivisions.
-void drawSphere( const vec3 &center, float radius, int subdivisions = -1 );
-//! Draws a textured quad of size \a scale that is aligned with the vectors \a bbRight and \a bbUp at \a pos, rotated by \a rotationRadians around the vector orthogonal to \a bbRight and \a bbUp.
-void drawBillboard( const vec3 &pos, const vec2 &scale, float rotationRadians, const vec3 &bbRight, const vec3 &bbUp, const Rectf &texCoords = Rectf( 0, 0, 1, 1 ) );
-//! Renders a stroked representation of \a cam
-void drawFrustum( const Camera &cam );
-void drawCoordinateFrame( float axisLength = 1.0f, float headLength = 0.2f, float headRadius = 0.05f );
-//! Draws a vector starting at \a start and ending at \a end. An arrowhead is drawn at the end of radius \a headRadius and length \a headLength.
-void drawVector( const vec3 &start, const vec3 &end, float headLength = 0.2f, float headRadius = 0.05f );
+Computer graphics can usually be summarized to a group of polygons or triangles. This is the most common representation of any type of graphic on a computer and Cinder's provides several tools that allow to work with triangles and polygons. One of the most commonly used is the `TriMesh` class. A `TriMesh` can represent a 2D or 3D shape with its properties like its colors, texture coordinates, normals, etc ...
 
-//! Draws a line between points a and b
-void drawLine( const vec3 &a, const vec3 &b );
+```c++
+auto trimesh = TriMesh();
+trimesh.appendPosition( p0 );
+trimesh.appendPosition( p1 );
+trimesh.appendPosition( p2 );
+trimesh.appendTriangle( 0, 1, 2 );
 ```
+
+#####4.3. [Batch.](/)
+
+Today graphics in OpenGL are governed by `Vertex Buffer Objects`, `Glsl Programs` and `Vertex Arrays`. The first one describe a list of vertices, its properties (like colors or texture coordinates) and how they are connected to form faces and polygons and the second one describes how the faces of the first are transformed and shaded. It replace the old fixed-function pipeline where a Glsl Program now has to be bound all the time for anything to get rendered. Simply put, the last one allows to group things together in a way that the Graphic Card understand. 
+
+Cinder provides an easy interface that wraps and takes care of all the above called a `gl::Batch`.
+
+```c++
+auto batch = gl::Batch::create( trimesh, gl::getStockShader( gl::ShaderDef().color() ) );
+batch->draw();
+```
+
+#####4.4. [States and Scoped Objects.](/)
+#####4.5. [Images, Surfaces and gl::Textures.](/)
+#####4.6. [Hot-Reloading Images.](/)
+#####4.7. [Stock Shaders.](/)
+#####4.8. [Importing 3D Models.](/)
+#####4.9. [Texturing 3D Models.](/)
+#####4.10. [Hot-Reloading Model and Textures.](/)
+#####4.11. [Custom Glsl Program.](/)
+#####4.12. [Hot-Reloading Glsl Programs.](/)
+#####4.13. [Geom Namespace.](/)
+#####4.14. [Vbo and VboMesh.](/)
+
+
+___
+###5. Runtime-Compiled C++
