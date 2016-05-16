@@ -1,7 +1,7 @@
 # FlyingTokyo 19 : An Introduction to Cinder, Hot-Reloading and Runtime-Compiled C++
 _Japanese translation by the amazing **Teiichi Ota**_
 
- まず、このリポジトリをコピーして、インストールスクリプト（実行するとCinder、Llvm、Clang、Clingなどなどのクローン、ビルド、そしてインストールまでのすべてを行うので時間がかかりますよ！）を起動し、ひとまずコーヒーでも飲みながら完了を待ってください：
+ まず、このリポジトリをクローンして、インストールスクリプト（実行するとCinder、Llvm、Clang、Clingなどなどのクローン、ビルド、そしてインストールまでのすべてを行うので時間がかかりますよ！）を起動し、ひとまずコーヒーでも飲みながら完了を待ってください：
 
 First thing first; Please clone this repository, start the install script and go grab yourself a cup of coffee (this is going to clone, build and install Cinder, Llvm, Clang, Cling and other smaller piece of code ... it is going to take a while!) : 
 
@@ -53,7 +53,7 @@ ___
   8. [Method chaining, Format and Options. / メソッドチェイニング、フォーマットとオプション](#28-method-chaining-format-and-options)
 3. [User Interface / ユーザーインターフェイス](#3-user-interface)
   1. [Cinder's Params. / Cinderのパラメータ](#31-cinders-params)
-  2. [Immediate mode UI. / “Immediate mode”のUI](#32-immediate-mode-ui)
+  2. [Immediate mode UI. / 即時モード（Immediate mode）のUI](#32-immediate-mode-ui)
 4. [Graphics / グラフィクス](#4-graphics)
   1. [Helpers functions and the gl::namespace. / ヘルパー関数とgl::namespace](#41-helpers-functions-and-the-glnamespace)
   2. [Vertex Batch and TriMesh. / “Vertex Batch”と“TriMesh”](#42-vertex-batch-and-trimesh)
@@ -621,7 +621,7 @@ C++ is a strongly typed language meaning that, unlike dynamic languages like Jav
 
 Type inference is the ability of the compiler to automatically deduce the types of your variables.  
 ```c++
-auto someNumber 		= 123.456f;	// the compiler will see this as a float
+auto someNumber 	= 123.456f;	// the compiler will see this as a float
 auto someOtherNumber 	= 789.012;	// the compiler will see this as a double
 auto anEmptyRectangle	= Rectf();	// the compiler will see this as a Rectf
 ```
@@ -756,11 +756,13 @@ Syntax of lambda functions is not really complicated but introduce some unusual 
 
 The capture-list comes from the fact that lambdas have their own private scope and are not aware of the context they are written in or what was declared before them. For that reason there is different approaches to passing objects to a lambda scope, as there is different approaches to passing arguments to a function.  
 	
-	- [] captures nothing 
-	- [this] captures the this pointer by value
-	- [a,&b] where a is captured by value and b is captured by reference.
-	- [=] captures all automatic variables odr-used in the body of the lambda by value
-	- [&] captures all automatic variables odr-used in the body of the lambda by reference
+	- [] captures nothing / なにもcaptureしない
+	- [this] captures the this pointer by value / thisポインタの値をcaptureする
+	- [a,&b] where a is captured by value and b is captured by reference. / aは値として、bは参照としてcapture
+	- [=] captures all automatic variables odr-used in the body of the lambda by value / Lambdaの本体に記述されている全auto変数およびodr-usedを値としてcapture
+	- [&] captures all automatic variables odr-used in the body of the lambda by reference / Lambdaの本体に記述されている全auto変数およびodr-usedを参照としてcapture
+
+`std::bind`は（他にも機能はありますが）単純にいえば、オブジェクトとメンバ関数を容易に結合する標準的な方法です。
 
 `std::bind` simply allows (among other things) to bind together an object and a member function in an easy and standard way.
 ```c++
@@ -789,6 +791,8 @@ CINDER_APP( CinderApp, RendererGl )
 ```
 
 #####2.7. [Smart Pointers and Cinder's "create pattern".](apps/)
+Cinderでは`shared_ptr`を**頻繁に**使用します。他の言語と異なり、C++には*ガベージコレクション*の仕組みが存在しません。オブジェクトの作成、メモリの確保と開放についてはコーダーが面倒を見なければなりません。C++11以降では、それらをより容易に行えるよういくつかのツールが提供されています。
+
 Cinder relies **a lot** on `shared_ptr`. Unlike other languages C++ doesn't have any *Garbage Collection* system; You have to take care of how you create objects, how do you reserve memory and how do you release it when it's not needed anymore. Fortunately for us C++11 introduced a set of tools to make this much more easy.
 
 **unique_ptr** : The most basic one is the `unique_ptr` that you can see as the usual pointer but where the memory will be automatically released when the object goes out of scope.
