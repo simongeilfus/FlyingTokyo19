@@ -658,26 +658,50 @@ for( auto texture : mTextures ) {
 ```
 
 #####2.4. [Const-correctness and parameter passing.](apps/)
+C++におけるconstの正確性（const-correctness）と引数渡しについては一冊の本にできるほど議論することはありますが、ひとことで言えば、良い習慣だから身につけようということになります。これを守ることによりコードの可読性は高くなり、それ自身がドキュメントとしての機能を持ち、安全で、ときにはより効率的なものとなります。`Const`を使えば自分だけでなく他のコーダーに対しても、置き換えたり変更してはならないものを明確化して宣言することができます。Cinderではこれがよく用いられます。
 
 We could write a book about const-correctness and parameter passing in C++ but in very short this is just a good habit to take. It will make your code more readable, self-documented, safer and sometimes more efficient. `Const` basically allows to state and make it clear to yourself and others when something should not be changed or modified. This is something you will see a lot in Cinder.  
 
+インターネットはこのトピックに関連した記事であふれていますが、つまるところ以下の4つのポイントを守ろう、ということになります：
+
 Internet is full of articles on this subject but probably the easiest thing to remember is the 4 following points : 
+
+- **関数の型がビルトインのものであるか、またはオブジェクトが小さい場合**は、引数を値として渡す（値として渡す場合、*オブジェクトの複製が作られる*）
+```c++
+void firstFunction( int number, bool boolean );
+```
 
 - Pass an argument by value when it is a **built-in type or a small object** (Passing by value makes a *copy of the object*) : 
 ```c++
 void firstFunction( int number, bool boolean );
 ```
+- 引数を**読み/書き**可能にしたい場合は参照を渡す
+```c++
+void secondFunction( Rectf &rectangle );
+```
 - Pass an argument by reference when you want the argument to be **read-write**:
 ```c++
 void secondFunction( Rectf &rectangle );
+```
+- 引数を**読み込みのみ**（読み込みのみの状態であれば、データの*不要な複製*を回避できる）にしたい場合はconst参照を渡す
+```c++
+void thirdFunction( const vector<gl::Texture> &textures );
 ```
 - Pass an argument by const reference when you want the argument to be **read-only** (Read-only also ensure that your data *won't be unecessarely copied* when calling the function).
 ```c++
 void thirdFunction( const vector<gl::Texture> &textures );
 ```
 
+渡したオブジェクトを各々の関数がどのように処理をするのかを理解するには、これら3つの種類の引数をざっと一瞥するだけで充分です。
 Only a quick glance at those 3 functions arguments is enough to know what the functions will do with the objects you pass to them.  
 
+- クラスの内容を変更しないメソッドを書くときは、それ自身の値を「const」と定義する。
+```c++
+class MyClass {
+public:
+	string getName() const;	
+};
+```
 - When writting a class's method that doesn't modify the content of the class mark it as 'const'.
 ```c++
 class MyClass {
@@ -688,7 +712,7 @@ public:
 
 #####2.5. [Override keyword.](apps/)
 
-`override`キーワードは最近のバージョンのC++で導入されたもので、こちらもその利用が推奨されます。
+`override`キーワードは最近のバージョンのC++で導入されたもので、こちらもその利用が推奨されます。この利用も良い習慣として推奨されます。このドキュメントに含まれるスニペットの大半に使用されていることが見て取れるでしょう。主な目的は、メソッドをオーバーライドするときの間違いを少なくすることです。関数の後ろにこのキーワードを追加することで、既存のベースクラスのメソッドをオーバーライドする意図があることを明確化することになります。ベースクラスにそのメソッドが存在しない場合、ナイスで明確なコンパイル時エラーが発生します。
 
 The `override` keyword was introduce recently in c++ and using it is another good habit to take. We've seen it used in most apps snippets above and its main purpose is to ensure that you make less mistakes when overriding methods. Adding this keyword after a function clearly states that your intent is to override an existing method of the base class. If the method doesn't exist in the base class, you'll get a nice and clear compile-time error.    
 
@@ -702,12 +726,17 @@ public:
 
 
 #####2.6. [Lambdas, std::function and std::bind.](apps/)
+Lambdaと`std::function`はC++標準に追加された素晴らしい機能です。このドキュメントではApp SettingsとSignalsの項でこれらをすでに使っています。`std::function`は、関数への参照を表現する標準的な方法です。これを用いると、コールバックと関数を容易に扱うことができます。旧来の関数ポインタと異なり、`std::function`は記述が短く済み、シンプルです。以下のように、テンプレートのパラメータとして関数のシグネチャを渡します：
+
 Lambdas and `std::function` are great additions to the standard. We've seen them used previously in the App Settings and Signals sections. A `std::function` is a standard way of representing a reference to a function. They are used to easily pass around callbacks and functions. Unlike traditional function pointers, `std::function` is short, simple and easy to remember. Just pass the signature of the function as the parameter of the template :   
 
 ```c++
 void registerCallback( const function<void()> &callback );
 void registerMouseEvent( const function<bool(MouseEvent event)> &event );
 ```
+
+Lambdaはこの考え方をさらに進め、匿名変数と同様なかたちで匿名関数を記述することを可能にします。
+
 Lambdas is going just a step further and allows us to write an anonymous function as we would write any variable.  
 ```c++
 auto divideByTen = []( float &i ) {
@@ -716,11 +745,15 @@ auto divideByTen = []( float &i ) {
 console() << divideByTen( 100.0f ) << endl; // output 10.0f
 ```
 
+Lambdaの構文はそれほど複雑ではありませんが、見慣れない記号の使い方が導入されています：
+
 Syntax of lambda functions is not really complicated but introduce some unusual combination of characters :
 ```
 [ capture-list ] ( params ) { body }
 [ capture-list ] ( params ) -> ret { body } 
 ```
+
+"capture-list"が使われている理由は、Lambdaがそれ自身でプライベートなスコープを持ついっぽうで、関数が記述されたコンテクストも、それ以前になにが宣言されたかについての情報も持たないからです。このため、関数に対して異なる引数の渡し方があるのと同様に、Lambdaスコープにオブジェクトを渡す方法がいくつか用意されています。
 
 The capture-list comes from the fact that lambdas have their own private scope and are not aware of the context they are written in or what was declared before them. For that reason there is different approaches to passing objects to a lambda scope, as there is different approaches to passing arguments to a function.  
 	
