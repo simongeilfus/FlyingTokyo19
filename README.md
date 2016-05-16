@@ -1,5 +1,4 @@
 # FlyingTokyo 19 : An Introduction to Cinder, Hot-Reloading and Runtime-Compiled C++
-test
 _Japanese translation by the amazing **Teiichi Ota**_
 
 First thing first; Please clone this repository, start the install script and go grab yourself a cup of coffee (this is going to clone, build and install Cinder, Llvm, Clang, Cling and other smaller piece of code ... it is going to take a while!) :  
@@ -980,7 +979,7 @@ for( auto p : mPoints ) {
 vertBatch->draw();  
 ```
 
-通常コンピューターグラフィックスはポリゴンまたは三角形の集合であると捉えることができます。これはすべてのタイプの、コンピューターで生成されるグラフィックスにおいて最も一般的な表現方法であり、Cinderにはポリゴンまたは三角形を扱うためのツールがいくつか用意されています。最も多く使われるのが’TriMesh’クラスです。これは2Dまたは3Dの形状を色、テクスチャ座標、法線といったプロパティとともに表現します。
+通常コンピューターグラフィックスはポリゴンまたは三角形の集合であると捉えることができます。これはすべてのタイプの、コンピューターで生成されるグラフィックスにおいて最も一般的な表現方法であり、Cinderにはポリゴンまたは三角形を扱うためのツールがいくつか用意されています。最も多く使われるのが`TriMesh`クラスです。これは2Dまたは3Dの形状を色、テクスチャ座標、法線といったプロパティとともに表現します。
 
 Computer graphics can usually be summarized to drawing a group of polygons or triangles. This is the most common representation of any type of graphic on a computer and Cinder's provides several tools that allow to work with triangles and polygons. One of the most commonly used is the `TriMesh` class. A `TriMesh` can represent a 2D or 3D shape with its properties like its colors, texture coordinates, normals, etc ...
 
