@@ -105,8 +105,10 @@ void TestProjectApp::setup()
 	//mScene.push_back( gl::Batch::create( buildings, gl::getStockShader( gl::ShaderDef().lambert() ) ) );
 	//mScene.push_back( gl::Batch::create( geom::Sphere(), gl::getStockShader( gl::ShaderDef().lambert() ) ) );
 	
+	// COPY THIS!
 	// Add the skybox
 	mScene.push_back( gl::Batch::create( geom::Sphere().radius( 100.0f ), gl::getStockShader( gl::ShaderDef().lambert() ) ) );
+	//!
 	
 	// Add trees
 	geom::SourceMods tree;
