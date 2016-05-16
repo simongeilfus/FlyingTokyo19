@@ -26,7 +26,13 @@ CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
 	settings->setWindowSize( ivec2( 200, 60 ) );
 	settings->setTitle( "App Settings" );
 	settings->setResizable( false );
-})
+	
+	auto displays = Display::getDisplays();
+	if( displays.size() > 1 ) {
+		settings->setDisplay( displays[1] );
+	}
+	
+} )
 
 /*
 // A bit less compact and elegant but it does exactly 
