@@ -4,13 +4,13 @@
 #include "cinder/CameraUi.h"
 #include "cinder/ObjLoader.h"
 #include "cinder/Rand.h"
-#include "cinder/ip/
 
 #include <cereal/archives/binary.hpp>
 #include "CinderCereal.h"
 #define RUNTIME_APP_CEREALIZATION
 
 #include "Watchdog.h"
+#include "CinderImGui.h"
 #include "runtime_app.h"
 
 using namespace ci;
@@ -20,7 +20,25 @@ using namespace std;
 class TestProjectApp : public App {
 public:
 	void setup() override;
+	void update() override;
 	void draw() override;
+	
+	void mouseDown( MouseEvent event ) override;
+	void mouseUp( MouseEvent event ) override;
+	void mouseWheel( MouseEvent event ) override;
+	void mouseMove( MouseEvent event ) override;
+	void mouseDrag( MouseEvent event ) override;
+	
+	void touchesBegan( TouchEvent event ) override;
+	void touchesMoved( TouchEvent event ) override;
+	void touchesEnded( TouchEvent event ) override;
+	
+	void keyDown( KeyEvent event ) override;
+	void keyUp( KeyEvent event ) override;
+	void resize() override;
+	void fileDrop( FileDropEvent event ) override;
+	
+	void cleanup() override;
 	
 	virtual void save( cereal::BinaryOutputArchive &ar );
 	virtual void load( cereal::BinaryInputArchive &ar );
@@ -46,8 +64,17 @@ void TestProjectApp::setup()
 	
 	// load texture
 	mTexture = gl::Texture2d::create( loadImage( loadAsset( "iceland.jpg" ) ) );
+	
+	// initialize ui
+	ui::initialize();
 }
 
+void TestProjectApp::update()
+{
+	{
+		ui::ScopedWindow window( "Params" );
+	}
+}
 void TestProjectApp::draw()
 {
 	
@@ -62,23 +89,59 @@ void TestProjectApp::draw()
 	
 	mBatch->draw();
 	mPlane->draw();
-	
+}
+
+void TestProjectApp::mouseDown( MouseEvent event ) 
+{
+}
+void TestProjectApp::mouseUp( MouseEvent event ) 
+{
+}
+void TestProjectApp::mouseWheel( MouseEvent event ) 
+{
+}
+void TestProjectApp::mouseMove( MouseEvent event ) 
+{
+}
+void TestProjectApp::mouseDrag( MouseEvent event ) 
+{
+}
+
+void TestProjectApp::touchesBegan( TouchEvent event ) 
+{
+}
+void TestProjectApp::touchesMoved( TouchEvent event ) 
+{
+}
+void TestProjectApp::touchesEnded( TouchEvent event ) 
+{
+}
+
+void TestProjectApp::keyDown( KeyEvent event ) 
+{
+}
+void TestProjectApp::keyUp( KeyEvent event ) 
+{
+}
+void TestProjectApp::resize() 
+{
+}
+void TestProjectApp::fileDrop( FileDropEvent event ) 
+{
+}
+
+void TestProjectApp::cleanup() 
+{
 }
 
 void TestProjectApp::save( cereal::BinaryOutputArchive &ar )
 {
-	ar( mCamera.getEyePoint(), mCamera.getOrientation() );
 }
 void TestProjectApp::load( cereal::BinaryInputArchive &ar )
 {
-	vec3 eye;
-	quat orientation;
-	ar( eye, orientation );
-	mCamera.setEyePoint( eye );
-	mCamera.setOrientation( orientation );
 }
 
-CINDER_RUNTIME_APP( TestProjectApp, RendererGl, , App::SettingsFn()
+CINDER_RUNTIME_APP( TestProjectApp, RendererGl, App::SettingsFn()
 #ifndef DISABLE_RUNTIME_COMPILED_APP
 // The interpreter needs to know about the blocks we are using
 ,[] ( cling::Interpreter *interpreter ) {
