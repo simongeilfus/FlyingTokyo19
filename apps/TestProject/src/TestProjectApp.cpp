@@ -28,11 +28,6 @@ public:
 	void mouseWheel( MouseEvent event ) override;
 	void mouseMove( MouseEvent event ) override;
 	void mouseDrag( MouseEvent event ) override;
-	
-	void touchesBegan( TouchEvent event ) override;
-	void touchesMoved( TouchEvent event ) override;
-	void touchesEnded( TouchEvent event ) override;
-	
 	void keyDown( KeyEvent event ) override;
 	void keyUp( KeyEvent event ) override;
 	void resize() override;
@@ -56,7 +51,7 @@ void TestProjectApp::setup()
 	// Initialize the Camera and its UI
 	mCamera = CameraPersp( getWindowWidth(), getWindowHeight(), 50.0f, 0.1f, 100.0f );
 	mCamera.lookAt( vec3(5,2,0), vec3(0) );
-	mCameraUi = CameraUi( &mCamera, getWindow() );
+	mCameraUi = CameraUi( &mCamera );
 	
 	// create batch
 	mBatch = gl::Batch::create( geom::Sphere().subdivisions( 64 ), gl::getStockShader( gl::ShaderDef().lambert() ) );
@@ -93,28 +88,22 @@ void TestProjectApp::draw()
 
 void TestProjectApp::mouseDown( MouseEvent event ) 
 {
+	mCameraUi.mouseDown( event );
 }
 void TestProjectApp::mouseUp( MouseEvent event ) 
 {
+	mCameraUi.mouseUp( event );
 }
 void TestProjectApp::mouseWheel( MouseEvent event ) 
 {
+	mCameraUi.mouseWheel( event );
 }
 void TestProjectApp::mouseMove( MouseEvent event ) 
 {
 }
 void TestProjectApp::mouseDrag( MouseEvent event ) 
 {
-}
-
-void TestProjectApp::touchesBegan( TouchEvent event ) 
-{
-}
-void TestProjectApp::touchesMoved( TouchEvent event ) 
-{
-}
-void TestProjectApp::touchesEnded( TouchEvent event ) 
-{
+	mCameraUi.mouseDrag( event );
 }
 
 void TestProjectApp::keyDown( KeyEvent event ) 
