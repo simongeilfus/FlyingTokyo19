@@ -36,7 +36,10 @@ public:
 	Perlin				mPerlin;
 	
 	vector<gl::BatchRef> mScene;
+	
+	// COPY THIS
 	gl::GlslProgRef		mGlslProg;
+	// !
 	
 	
 	CameraPersp			mCamera;
@@ -55,6 +58,7 @@ void TestProjectApp::setup()
 	// initialize ui
 	ui::initialize();
 	
+	// COPY THIS!
 	// watch and create shader
 	wd::unwatchAll();
 	wd::watch( "fog.*", [this]( const fs::path &path ) {
@@ -65,6 +69,7 @@ void TestProjectApp::setup()
 			console() << exc.what() << endl;
 		}
 	} );
+	// !
 	
 	// noise helper
 	auto noise = [this]( const vec2 &pos ) {
@@ -133,6 +138,7 @@ void TestProjectApp::update()
 		getWindow()->setAlwaysOnTop( isAlwaysOnTop );
 	}
 	
+	// COPY THIS!
 	// update shader settings
 	{
 		ui::ScopedWindow window( "Shading" );
@@ -157,6 +163,7 @@ void TestProjectApp::update()
 		mGlslProg->uniform( "uSunIntensity", uSunIntensity );
 		mGlslProg->uniform( "uInscatteringCoeffs", uInscatteringCoeffs );
 	}
+	//!
 }
 void TestProjectApp::draw()
 {
@@ -168,9 +175,11 @@ void TestProjectApp::draw()
 	gl::setMatrices( mCamera );
 	
 	for( const auto &sceneObject : mScene ) {
+		// COPY THIS!
 		if( mGlslProg && sceneObject->getGlslProg() != mGlslProg ) {
 			sceneObject->replaceGlslProg( mGlslProg );
 		}
+		//!
 		
 		sceneObject->draw();
 	}
