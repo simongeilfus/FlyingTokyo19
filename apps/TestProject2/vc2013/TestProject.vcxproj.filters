@@ -1,0 +1,130 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Blocks">
+      <UniqueIdentifier>{0E087B69-2E60-471C-9AFD-2ED37398AF2F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-Cereal">
+      <UniqueIdentifier>{73BD5E74-FDCA-46C6-ACEB-51FA91341B55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-Cereal\include">
+      <UniqueIdentifier>{7252368F-DCDC-48ED-8092-504F24065266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\ImGui">
+      <UniqueIdentifier>{42AC0A9E-215D-45D7-8B6F-779F19E54175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\ImGui\include">
+      <UniqueIdentifier>{E569508F-CF71-4802-8C9C-CCC35006AD5C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\ImGui\lib">
+      <UniqueIdentifier>{A2AB2421-7E90-47F0-AF4C-3087E719178C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\ImGui\lib\imgui">
+      <UniqueIdentifier>{D8F42E32-78EE-44CE-A3BA-A8E896C9D812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\ImGui\src">
+      <UniqueIdentifier>{B54494B8-050A-4AA0-9083-9011C1658CE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Simplex Noise">
+      <UniqueIdentifier>{DC4B4496-48EF-4419-A3B0-D61F1A47CA20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Simplex Noise\include">
+      <UniqueIdentifier>{8C6B14AB-0096-44C3-B15E-DED078E43C7E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\SpacePartitioning">
+      <UniqueIdentifier>{4F8079F9-BA0C-4F52-AF4A-3FED314138B6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\SpacePartitioning\include">
+      <UniqueIdentifier>{3C33D9AE-0FCF-4A1B-9C19-08D92979F542}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\SpacePartitioning\include\sp">
+      <UniqueIdentifier>{4F076A32-C400-4E2E-A8E3-DD12AD192125}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Watchdog">
+      <UniqueIdentifier>{2A99936E-932B-4C85-B88F-07FA2E1BA821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Watchdog\include">
+      <UniqueIdentifier>{45728C6F-DE7D-4742-A16B-9F2013D2EF48}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\TestProjectApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TestProjectApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Cinder-Cereal\include\CinderCereal.h">
+      <Filter>Blocks\Cinder-Cereal\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Cinder-ImGui\include\CinderImGui.h">
+      <Filter>Blocks\ImGui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Cinder-ImGui\include\imgui_user.h">
+      <Filter>Blocks\ImGui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Cinder-ImGui\include\imgui_user.inl">
+      <Filter>Blocks\ImGui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Cinder-ImGui\lib\imgui\imconfig.h">
+      <Filter>Blocks\ImGui\lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Cinder-ImGui\lib\imgui\imgui.h">
+      <Filter>Blocks\ImGui\lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Cinder-ImGui\lib\imgui\imgui_internal.h">
+      <Filter>Blocks\ImGui\lib\imgui</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\..\cinder\blocks\Cinder-ImGui\src\CinderImGui.cpp">
+      <Filter>Blocks\ImGui\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cinder\blocks\Cinder-ImGui\lib\imgui\imgui.cpp">
+      <Filter>Blocks\ImGui\lib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cinder\blocks\Cinder-ImGui\lib\imgui\imgui_draw.cpp">
+      <Filter>Blocks\ImGui\lib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cinder\blocks\Cinder-ImGui\lib\imgui\imgui_demo.cpp">
+      <Filter>Blocks\ImGui\lib\imgui</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\..\cinder\blocks\SimplexNoise\include\Simplex.h">
+      <Filter>Blocks\Simplex Noise\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\SpacePartitioning\include\sp\Grid.h">
+      <Filter>Blocks\SpacePartitioning\include\sp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\SpacePartitioning\include\sp\HashTable.h">
+      <Filter>Blocks\SpacePartitioning\include\sp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\SpacePartitioning\include\sp\KdTree.h">
+      <Filter>Blocks\SpacePartitioning\include\sp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder\blocks\Watchdog\include\Watchdog.h">
+      <Filter>Blocks\Watchdog\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
