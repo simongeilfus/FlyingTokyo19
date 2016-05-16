@@ -51,8 +51,6 @@ public:
 
 void TestProjectApp::setup()
 {
-	// getWindow()->setAlwaysOnTop();
-	
 	// Initialize the Camera and its UI
 	mCamera = CameraPersp( getWindowWidth(), getWindowHeight(), 50.0f, 0.1f, 100.0f );
 	mCamera.lookAt( vec3(5,2,0), vec3(0) );
@@ -67,7 +65,9 @@ void TestProjectApp::setup()
 	// initialize ui
 	ui::initialize();
 	
+	
 	// create advanced batch
+	
 	// Create my data
 	vector<vec3> positions;
 	vector<ColorA> colors;
@@ -93,22 +93,13 @@ void TestProjectApp::setup()
 		{ colorsLayout, colorsVbo }
 	} );
 	
-	// watch the shader
-	wd::watch( "shader.*", [this, vboMesh]( const fs::path &path ) {
-		try {
-			// create a shader
-			auto glslProg	= gl::GlslProg::create( gl::GlslProg::Format()
-											   .vertex( loadAsset( "shader.vert" ) )
-											   .fragment( loadAsset( "shader.frag" ) ) );
-			// linking my shader to my vbo mesh
-			if( glslProg ) {
-				mBatch = gl::Batch::create( vboMesh, glslProg );
-			}
-		}
-		catch( gl::GlslProgExc exc ) {
-			console() << exc.what() << endl;
-		}
-	} );
+	// create a shader
+	auto glslProg	= gl::GlslProg::create( gl::GlslProg::Format()
+										   .vertex( loadAsset( "shader.vert" ) )
+										   .fragment( loadAsset( "shader.frag" ) ) );
+	
+	// linking my shader to my vbo mesh
+	mBatch			= gl::Batch::create( vboMesh, glslProg );
 	
 	mBackgroundColor = vec4(0.5f);
 }
@@ -131,10 +122,8 @@ void TestProjectApp::draw()
 	gl::ScopedTextureBind scopedTex0( mTexture );
 	gl::ScopedColor scopedColor( ColorA::gray( 1.0f, 0.2f ) );
 	
-	if( mBatch ) {
-		mBatch->draw();
-	}
-	mPlane->draw();
+	mBatch->draw();
+	//mPlane->draw();
 }
 
 void TestProjectApp::mouseDown( MouseEvent event ) 
@@ -181,10 +170,8 @@ void TestProjectApp::load( cereal::BinaryInputArchive &ar )
 {
 }
 
-CINDER_RUNTIME_APP( TestProjectApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
-	//settings->setAlwaysOnTop();
-}
-#ifndef DISABLE_RUNTIME_COMPILATION
+CINDER_RUNTIME_APP( TestProjectApp, RendererGl( RendererGl::Options().msaa( 8 ) ), App::SettingsFn()
+#ifndef DISABLE_RUNTIME_COMPILED_APP
 // The interpreter needs to know about the blocks we are using
 ,[] ( cling::Interpreter *interpreter ) {
    // We need to find the path starting from the location of the app
