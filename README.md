@@ -590,6 +590,8 @@ C++11 (and C++14) has brought a great number of very nice new features to the st
 I would strongly advise to have a look to [David Wicks / sansumbrella.com](http://sansumbrella.com/) amazing ["A Soso Tour of Cpp"](https://github.com/sosolimited/Cpp-Handbook/blob/master/tour-of-cpp.md) if you want a more complete introduction on the subject.  
 
 #####2.1. [Namespaces.](apps/)
+名前空間じたいはモダンな機能でもありませんが、これまでご覧いただいたコードでもおわかりのように、Cinderでは名前空間をよく利用します。
+
 Namespaces can't really be called a modern feature but as we have seen previously Cinder relies a lot on them. Namespaces are just a convenient way to group sections of code. It allows us to stick to most logical names for classes and functions without caring too much about name conflicts.
 ```c++
 namespace MyLibrary {
@@ -603,7 +605,11 @@ From there you can access the `vec2` type by writting `MyLibrary::vec2` or by ad
 
 
 #####2.2. [Auto keyword and type inference.](apps/)
+C++は強い型付けがされた言語であり、JavaScriptのような動的な言語と違い、開発者は変数に型を指定しなければなりません（よってC++にはJSにあるような`var`キーワードが存在しません）。型推論の導入により、強い型付けがなされた言語の安全性を確保しながらいくばくかの柔軟性を実現できます。
+
 C++ is a strongly typed language meaning that, unlike dynamic languages like JavaScript, you have to give a type to the variable you create (hence the abscence of a `var` keywords like in JS). The introduction of type inference slighly changes that while retaining the safety of a strongly typed language.  
+
+型推論とは、コンパイラが自動的に変数の型を推論する機能です。
 
 Type inference is the ability of the compiler to automatically deduce the types of your variables.  
 ```c++
@@ -611,6 +617,8 @@ auto someNumber 		= 123.456f;	// the compiler will see this as a float
 auto someOtherNumber 	= 789.012;	// the compiler will see this as a double
 auto anEmptyRectangle	= Rectf();	// the compiler will see this as a Rectf
 ```
+これによって、ときにコードの可読性が高まり、また長い変数型指定をしなくても済むことに繋がります。
+
 It sometimes makes the code more readable and in other case saves you from writting very long types. Let's say that we have a map of texture format that we want to iterate:    
 ```c++
 // C++11 allows us to write what we used to write like this:
@@ -666,6 +674,8 @@ public:
 ```
 
 #####2.5. [Override keyword.](apps/)
+
+`override`キーワードは最近のバージョンのC++で導入されたもので、こちらもその利用が推奨されます。
 
 The `override` keyword was introduce recently in c++ and using it is another good habit to take. We've seen it used in most apps snippets above and its main purpose is to ensure that you make less mistakes when overriding methods. Adding this keyword after a function clearly states that your intent is to override an existing method of the base class. If the method doesn't exist in the base class, you'll get a nice and clear compile-time error.    
 
@@ -836,7 +846,11 @@ mParams->addParam( "Orientation", &mSomeQuaternion );
 ```
 
 #####3.2. [Immediate mode UI.](#32-immediate-mode-ui)
+[Dear ImGui](https://github.com/ocornut/imgui)は、同様の目的のためにOmar Cornutによって書かれた小さなライブラリです。これにより、開発者は迅速かつ容易に小さなツールを作成し、インターフェイスをテストすることができます。非常に柔軟で、膨大な数の道具（widgets）を提供し、*anttweakbar*よりもずっと包括的で見た目も良好です。
+
 [Dear ImGui](https://github.com/ocornut/imgui) is another small library written by Omar Cornut with more or less the same goal. Providing developers a fast and easy way of creating small tools and testing interfaces. It is very flexible, has a huge number of widgets and is definitely both much more complete and better looking than *anttweakbar*.  
+
+*Dear ImGui*が*anttweakbar*と大きく違うところは、**即時モードユーザーインターフェイス**ライブラリとして設計されているということです。アプリの起動時にUIを初期化するかわりにmainループ内にUIコードを記述し、グラフィックスを描画するのと同様にUIステートを毎フレーム更新します。即時モードグラフィックAPIと同様のことをUIに行うものと考えてもよいでしょう。最初は奇妙に思えるかもしれませんが、超パワフルで柔軟性があるツールです。
 
 The main difference with *anttweakbar* is in the fact that *Dear ImGui* is designed as a **Immediate Mode User Interface** library. Instead of initializing your UI when the application starts, you write your UI code in the main loop, repeating UI states every frame, like you would do when rendering graphics. Think of it as a some sort of equivalent to a Immediate Mode Graphic API. It seems a bit weird at first but it's extremly powerfull and flexible.  
 
@@ -856,6 +870,8 @@ void CinderApp::update()
  	}
 }
 ```
+ステートレスUIのとても良いところのひとつは、特別なロジックを追加しなくてもアプリの状態を容易に反映できることです。例えば、あるオブジェクトのベクターを作成・削除・変更可能にするには以下のようなコードを書くだけです：
+
 One really nice thing with a state-less UI, is the fact that it can really easily reflect the state of your app without any extra-work. Let say that you have a vector of Objects that can be created, deleted or modified: 
 
 ```c++
@@ -878,21 +894,35 @@ void CinderApp::update()
 ___
 ###4. Graphics
 
+Cinderを始めるにあたって役立つドキュメントやいくつかの素晴らしいガイドが提供されています。[The OpenGL guide](https://libcinder.org/docs/guides/opengl/) はCinderでOpenGLを扱うときに最初に参照すべきドキュメントです
+
 Cinder now has some excellent documentation and a few great guides to get you started. [The OpenGL guide](https://libcinder.org/docs/guides/opengl/) is definitely the place to start if you need some introduction to OpenGL in Cinder.
 
+Cinder 0.9からOpenGLのデフォルトバージョンは3.2 Core Profile（デスクトップ）またはOpenGL ES 2.0および3.0（モバイル）となっています。最近のバージョンのOpenGLは大幅に刷新され、基本的には[固定機能パイプライン（fixed function pipeline）](https://www.opengl.org/wiki/Fixed_Function_Pipeline)と旧式な即時モードレンダリングを使わないようになっています。端的にいうと、（誤って）便利だとされていた`glBegin`、`glVertex`、`glEnd`といったもの、そして（醜い）`glEnable(GL_LIGHTING)`や`glLightfv(GL_LIGHT0, GL_AMBIENT, ambient )`によって容易にアクセスできたシェーディングパイプラインは共に退場しました。
+
 Since Cinder 0.9 the default version of OpenGL is 3.2 Core Profile on desktop and OpenGL ES 2.0 and 3.0 on mobile. Recent versions of OpenGL have changed drastically while more or less abandoning the [fixed function pipeline](https://www.opengl.org/wiki/Fixed_Function_Pipeline) and the old immediate-mode rendering. In two sentences; all the `glBegin`/`glVertex`/`glEnd` we (wrongly) conceived as convenient before are gone and the (ugly) shading pipeline we had easily access to using `glEnable(GL_LIGHTING)` or `glLightfv(GL_LIGHT0, GL_AMBIENT, ambient )` is gone as well.  
+
+このようなOpenGLの仕様変更を開発者がOpenGLコードを一行も書くことなく理解できるような素晴らしいAPIやツール群をCinderは提供しているといえるのではないでしょうか。
 
 Hopefully Cinder provides a great API and a set of tools to help us understand those changes without having to write a single line of OpenGL.
 
 #####4.1. [Helpers functions and the gl::namespace.](/)
 
+“gl”名前空間は2つのファイル、関数、およびクラスのグループに分類できます。最初のグループにはOpenGL機能をラップする、他に依存しない関数群([`cinder/gl/wrapper.h`](https://github.com/cinder/Cinder/blob/master/include/cinder/gl/wrapper.h))と、グラフィックスを素早くスケッチすることを可能にする小さな追加ツール群([`cinder/gl/draw.h`](https://github.com/cinder/Cinder/blob/master/include/cinder/gl/draw.h))があります。後者は処理速度は高くありませんが、`VBOS`、`VAOS`、`Glsl Programs`を直接操作せずにささっとプロトタイプを書いたりデバッグをできるところが便利です。
+
 The gl namespace can be split into two series of files, functions and classes. The first one is a series of free-standing functions that wrap opengl functions ([`cinder/gl/wrapper.h`](https://github.com/cinder/Cinder/blob/master/include/cinder/gl/wrapper.h)) or that add short tools that allows to quickly sketch graphics ([`cinder/gl/draw.h`](https://github.com/cinder/Cinder/blob/master/include/cinder/gl/draw.h)). The later is not intended to be performant but is really usefull because it allows us to rapidly write prototypes or debug graphics without the need to use `VBOS`, `VAOS` and `Glsl Programs`.  
 
+また、2Dの処理に利用できる便利な関数も用意されています：`drawLine, drawSolidRect, drawSolidRoundedRect, drawSolidCircle, drawSolidEllipse, drawStrokedRect, drawStrokedRect, drawStrokedRoundedRect, drawStrokedCircle, drawStrokedCircle, drawStrokedEllipse, drawString, drawStringCentered, drawStringRight, ...`そして3D向けの便利機能も：`drawCube, drawColorCube, drawStrokedCube, drawStrokedCube, drawSphere, drawSphere, drawBillboard, drawFrustum, drawCoordinateFrame, drawVector, drawLine,...`
+
 You'll find a series of 2D convenience functions like `drawLine, drawSolidRect, drawSolidRoundedRect, drawSolidCircle, drawSolidEllipse, drawStrokedRect, drawStrokedRect, drawStrokedRoundedRect, drawStrokedCircle, drawStrokedCircle, drawStrokedEllipse, drawString, drawStringCentered, drawStringRight, ...` and 3d convenience functions like  `drawCube, drawColorCube, drawStrokedCube, drawStrokedCube, drawSphere, drawSphere, drawBillboard, drawFrustum, drawCoordinateFrame, drawVector, drawLine,...`.
+
+`gl namespace`に属するもうひとつのタイプのツールは、OpenGL機能を抽象化する一連のクラスです。これには`Buffers`や`Queries`といった基本的なものから`VboMesh`、`TextureFont`、または`Batch`といった複雑なものまで含まれます。
 
 The second type of tools you'll find in the `gl namespace` is a series of classes that abstract OpenGL functionalities. They go from basic things like `Buffers` and `Queries` to higher level objects like `VboMesh`, `TextureFont` or `Batch`.
 
 #####4.2. [Vertex Batch and TriMesh.](/)
+
+即時モード（Immediate mode）レンダリング方式（’glBegin’、’glVertex’、’glEnd’）は旧バージョンのOpenGLにおける設計上の欠陥であり、GPUの扱いにおいてさまざまな悪い慣行をもたらしました。とはいえ、現在でもスケッチングやデバッギングにおいては有用になる場合があります。そんなわけで、Cinderではそれらのツールの働きを模した小さなクラスをいくつか用意しています。
 
 Immediate mode rendering (`glBegin`, `glVertex`, `glEnd`) was a mistake in the design of older version of OpenGL and it gave us all bad habits in terms of how to communicate with a GPU. That said, there is still some small occasions where this kind of tools can be usefull when sketching things out or debugging. For this reason Cinder provides a small classes that mimics the way it used to work.  
 ```c++
@@ -903,6 +933,8 @@ for( auto p : mPoints ) {
 }
 vertBatch->draw();  
 ```
+
+通常コンピューターグラフィックスはポリゴンまたは三角形の集合であると捉えることができます。これはすべてのタイプの、コンピューターで生成されるグラフィックスにおいて最も一般的な表現方法であり、Cinderにはポリゴンまたは三角形を扱うためのツールがいくつか用意されています。最も多く使われるのが’TriMesh’クラスです。これは2Dまたは3Dの形状を色、テクスチャ座標、法線といったプロパティとともに表現します。
 
 Computer graphics can usually be summarized to drawing a group of polygons or triangles. This is the most common representation of any type of graphic on a computer and Cinder's provides several tools that allow to work with triangles and polygons. One of the most commonly used is the `TriMesh` class. A `TriMesh` can represent a 2D or 3D shape with its properties like its colors, texture coordinates, normals, etc ...
 
@@ -919,7 +951,11 @@ trimesh.appendTriangle( 0, 1, 2 );
 
 #####4.3. [Batch.](/)
 
+現在のOpenGLにおいて、グラフィックスは`Vertex Buffer Objects`、`Glsl Programs`、そして`Vertex Arrays`で構成されます。`Vertex Buffer Objects`は頂点のリストと各々のプロパティ（例えば色またはテクスチャの座標）、そしてそれらがどのように接続してフェイスや多角形を構成するのかを表現します。`Glsl Programs`は`Vertex Buffer Objects`に表現されたフェイスに変形を加えたりシェードを加えるものです。これは、従来固定機能パイプラインで処理されていましたが、現在のOpenGLにおいて、レンダリングされるものすべては、常にこのGlsl Programと結合（Bound）されます。`Vertex Arrays`はグラフィックカードが理解可能な形式に、複数のグラフィックス構成要素をグルーピングするものです。
+
 Today graphics in OpenGL are governed by `Vertex Buffer Objects`, `Glsl Programs` and `Vertex Arrays`. The first one describe a list of vertices, its properties (like colors or texture coordinates) and how they are connected to form faces and polygons and the second one describes how the faces of the first are transformed and shaded. It replace the old fixed-function pipeline where a Glsl Program now has to be bound all the time for anything to get rendered. Simply put, the last one allows to group things together in a way that the Graphic Card understand. 
+
+Cinderはこれらの要素を操作が容易なかたちにラップするインターフェイス`gl::Batch`を用意しています。ユーザーにとって`gl::Batch`は単純にいくつかのジオメトリデータ（`TriMesh`、`geom::Source`、`ObjLoader`、`gl::VboMesh`などなど...）と`gl::GlslProg`で構成されるものです。例えば、上記サンプルの`TriMesh`にシンプルな色シェーダーを追加してレンダリングする場合は以下のように書きます：
 
 Cinder provides an easy interface that wraps and takes care of all the above called a `gl::Batch`. For the user a `gl::Batch` is simply composed of some geometry data (can be a `TriMesh`, `geom::Source`, `ObjLoader`, `gl::VboMesh`, ... ) and a `gl::GlslProg`. For instance if we want to render the `TriMesh` from the example above with a simple color shader, we would write the following :   
 
