@@ -72,8 +72,8 @@ void TestProjectApp::setup()
 	vector<vec3> positions;
 	vector<ColorA> colors;
 	for( size_t i = 0; i < 10000; ++i ) {
-		positions.push_back( vec3( 0.0f, 1.0f, 0.0f ) + randVec3() * randFloat( 0, 1 ) );
-		colors.push_back( ColorA( randFloat( 0.9f, 1.0f ), randFloat( 0.6f, 0.8f ), randFloat( 0.9f, 1.0f ), 1.0f ) );
+		positions.push_back( randVec3() * randFloat( 0, 100 ) );
+		colors.push_back( ColorA( randFloat( 0.9f, 1.0f ), randFloat( 0.6f, 0.8f ), randFloat( 0.9f, 1.0f ), 0.2f ) );
 	}
 	
 	// Describe the data in terms of what it is, what dimensions it has, etc
@@ -94,7 +94,6 @@ void TestProjectApp::setup()
 	} );
 	
 	// watch the shader
-	wd::unwatchAll();
 	wd::watch( "shader.*", [this, vboMesh]( const fs::path &path ) {
 		try {
 			// create a shader
@@ -105,28 +104,18 @@ void TestProjectApp::setup()
 			if( glslProg ) {
 				mBatch = gl::Batch::create( vboMesh, glslProg );
 			}
-			
 		}
 		catch( gl::GlslProgExc exc ) {
 			console() << exc.what() << endl;
 		}
 	} );
 	
-	gl::pointSize( 15.0f );
-	
 	mBackgroundColor = vec4(0.5f);
 }
 
 void TestProjectApp::update()
 {
-	static float horPosition = 0.0f;
-	ui::DragFloat( "HorizontalPosition", &horPosition, 0.01f, -10.0f, 10.0f );
-	static vec4 colorMod = vec4( 1.0f );
-	ui::ColorEdit4( "Color", &colorMod[0] );
-	if( mBatch ) {
-		mBatch->getGlslProg()->uniform( "horizontalPosition", horPosition );
-		mBatch->getGlslProg()->uniform( "colorModifier", colorMod );
-	}
+
 	
 }
 void TestProjectApp::draw()
@@ -143,7 +132,6 @@ void TestProjectApp::draw()
 	gl::ScopedColor scopedColor( ColorA::gray( 1.0f, 0.2f ) );
 	
 	if( mBatch ) {
-		gl::ScopedDepth	scopedDepth( false );
 		mBatch->draw();
 	}
 	mPlane->draw();

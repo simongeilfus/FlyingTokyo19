@@ -1,13 +1,15 @@
-#version 410 core
-
 uniform mat4    ciModelViewProjection;
 
 in vec4         ciPosition;
-//in vec2     	ciTexCoord0;
+in vec4 		ciColor;
 
-//out vec2		vUv;
+uniform float horizontalPosition;
+
+out vec4 vColor;
 
 void main(){
-  //  vUv			= ciTexCoord0;
-    gl_Position	= ciModelViewProjection * ciPosition;
+	vColor 		= ciColor;
+	vec4 pos 	= ciPosition;
+	pos.x 		+= horizontalPosition;
+    gl_Position	= ciModelViewProjection * pos;
 }
