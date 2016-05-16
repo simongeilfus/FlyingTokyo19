@@ -111,7 +111,24 @@ ParticlesRenderer::ParticlesRenderer( size_t maxParticles )
 	auto vboMesh	= gl::VboMesh::create( maxParticles, GL_POINTS, { { positionsLayout, positionsVbo } } );
 	
 	// Create a shader
-	auto glslProg	= gl::GlslProg::create( gl::GlslProg::Format().vertex( loadAsset( "shader.vert" ) ).fragment( loadAsset( "shader.frag" ) ) );
+	auto glslProg	= gl::GlslProg::create( gl::GlslProg::Format()
+										   .vertex( CI_GLSL( 400,
+															uniform mat4    ciModelViewProjection;
+															in vec4         ciPosition;
+															
+															void main() {
+																gl_PointSize	= ciPosition.z;
+																vec4 pos		= vec4( ciPosition.x, ciPosition.y, 0.0f, 1.0f );
+																gl_Position		= ciModelViewProjection * pos;
+															} ) )
+										   .fragment( CI_GLSL( 400,
+															  out vec4 oColor;
+															  void main() {
+																  vec2 uv = gl_PointCoord.xy;
+																  float circle = smoothstep( 0.5, 0.4, length( uv - vec2(0.5f) ) );
+																  if( circle < 0.01 ) discard;
+																  oColor = vec4( circle );
+															  } ) ) );
 	// Create a Batch with the VboMesh and the Shader
 	mBatch = gl::Batch::create( vboMesh, glslProg );
 }
@@ -164,7 +181,7 @@ void TestProjectApp::setup()
 	ui::initialize();
 	
 	// Create particles
-	size_t numParticles = 10000;
+	size_t numParticles = 25000;
 	mParticlesRenderer = ParticlesRenderer::create( numParticles );
 	for( int i = 0; i < numParticles; ++i ) {
 		vec2 pos = vec2( randFloat( 0, getWindowWidth() ), randFloat( 0, getWindowHeight() ) );
