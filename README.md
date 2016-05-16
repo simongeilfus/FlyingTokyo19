@@ -74,7 +74,7 @@ ___
 
 ###1. Short introduction to Cinder
 
-Cinderは一般的にクリエイティブコーディングとも言われる、美しさを持ったプログラミングに用いられるC++言語のライブラリです。グラフィック、オーディオ、ビデオ、計算幾何学に使われます。対応プラットフォームはOS X、Windows、iOS、WinRT。（非公式ですがグラフィックスAPIのVulkanやLinux、Androidにも対応しています。）
+Cinderは一般的にクリエイティブコーディングとも言われる、アート表現を意図したプログラミングに用いられるC++言語のライブラリです。グラフィック、オーディオ、ビデオ、計算幾何学に使われます。対応プラットフォームはOS X、Windows、iOS、WinRT。（非公式ですがグラフィックスAPIのVulkanやLinux、Androidにも対応しています。）
 
 Cinderは制作の現場で鍛えられ、プロフェッショナルがメインのツールとして使うに足るほどパワフルでありながら、学びや実験にも適しています。 (https://libcinder.org/about)
 
@@ -196,7 +196,7 @@ https://isocpp.org/wiki/faq/newbie#main-returns-int
 
 
 #####1.2. [Cinder App Structure.](apps/102 CinderAppStructure/src/CinderAppStructure.cpp)
-Cinderはソースファイルの組織化やアプリの構造化においてシンプルなアプローチを採ることができます。上記のコードは通常ひとつのファイルにまとめることができます。これにより、シンプルなアプリケーションをコードする際に複数のファイルを行ったり来たりする必要がなくなるため、よりクイックなプロトタイプ作成に役に立つと私は考えています。  
+Cinderはソースファイルの組織化やアプリの構造化においてシンプルなアプローチを採っています。上記のコードは通常ひとつのファイルにまとめることができます。これにより、シンプルなアプリケーションをコードする際に複数のファイルを行ったり来たりする必要がなくなるため、よりクイックなプロトタイプ作成に役に立つと私は考えています。  
 
 Cinder has a really simple approach to structuring the source files and the app structure. The code mentionned above is usually merged into one single file. IMO this allows faster prototyping as you don't need to go back and forth between files to write a simple application.  
 
@@ -343,6 +343,8 @@ void mySettings( App::Settings *settings )
 CINDER_APP( AppSettings, RendererGl, mySettings )
 ```
 
+settings関数を使い、より限定的で先進的なセッティングを行うこともできます。例えば以下のように、外部ディスプレイが接続されているときに、そのディスプレイ上にアプリを起動することも可能です：
+
 The settings function could also be used for more specific/advanced settings. For example you could decide to start the app on the secondary display if more than one display is detected:  
 ```c++
 CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
@@ -351,6 +353,8 @@ CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
 })
 ```
 
+`CINDER_APP`マクロは**OpenGLレンダラー**に設定を行う機能も提供します。たとえば望ましいバージョン、アンチエイリアスの量、あるいはステンシルバッファ利用の可否などです：
+
 The `CINDER_APP` macro also provides a way to specify options for the **OpenGL Renderer**. Such as the desired version, the amount of antialiasing or the presence of a stencil buffer for example :  
 ```c++
 // this will create a renderer with a multisample anti aliasing of 16 and a stencil buffer
@@ -358,6 +362,8 @@ CINDER_APP( AppSettings, RendererGl( RendererGl::Options().msaa( 16 ).stencil() 
 ```  
 
 #####1.5. [Events.](apps/105 AppEvents/src/AppEventsApp.cpp)
+Cinderの[AppBaseクラス](https://github.com/cinder/Cinder/blob/master/include/cinder/app/AppBase.h)はアプリおよびアプリウィンドウのベースのイベント群を受信する、オーバーライド可能なメソッドを提供します。アプリ内で発生するイベントの多くにサブスクライブする最も容易な方法です。
+
 Cinder's [AppBase class](https://github.com/cinder/Cinder/blob/master/include/cinder/app/AppBase.h) provides a series of method you can override to receive the base events of your app and the app's window events. It is the easiest way of subscribing to most events in your app :
 ```c++
 #include "cinder/app/App.h"
@@ -412,7 +418,7 @@ CINDER_APP( AppEventsApp, RendererGl )
 ```
 
 #####1.6. [Extra flexibility with signals.](apps/106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
-Cinderでは”signals”という仕組みを使うことでアプリケーションイベントをいっそう柔軟に処理することができます。Cinderのsignal実装は、他の言語にある同様のイベント処理のなかでも最も優れたものを取り入れています。高速であり、信頼性が高く、うまく設計されています。これを用いれば、以下のように思い通りにコードを構築できます：  
+Cinderでは”signals”という仕組みを使うことで、さらに柔軟にアプリケーションイベントを処理することができます。Cinderのsignal実装は、他の言語にある同様のイベント処理のなかでも最も優れたものを取り入れています。高速であり、信頼性が高く、うまく設計されています。これを用いれば、以下のように思い通りにコードを構築できます：  
 
 Cinder offers another level of flexibility in how you deal with the app events thanks to its use of "signals". IMO Cinder's signal implementation is based on the best available out there. It is fast, reliable and well designed.  
 It allows you to structure things exactly the way you want : 
@@ -590,7 +596,7 @@ C++11 (and C++14) has brought a great number of very nice new features to the st
 I would strongly advise to have a look to [David Wicks / sansumbrella.com](http://sansumbrella.com/) amazing ["A Soso Tour of Cpp"](https://github.com/sosolimited/Cpp-Handbook/blob/master/tour-of-cpp.md) if you want a more complete introduction on the subject.  
 
 #####2.1. [Namespaces.](apps/)
-名前空間じたいはモダンな機能でもありませんが、これまでご覧いただいたコードでもおわかりのように、Cinderでは名前空間をよく利用します。
+名前空間じたいはモダンな機能でもありませんが、これまでご覧いただいたコードでもおわかりのように、Cinderでは名前空間をよく利用します。名前空間は、コードのセクションをグループ化して整理する際に便利なコンセプトです。これを利用することで、名前の衝突を心配することなく、クラスや関数にもっとも論理的な名前をつけることが可能になります。
 
 Namespaces can't really be called a modern feature but as we have seen previously Cinder relies a lot on them. Namespaces are just a convenient way to group sections of code. It allows us to stick to most logical names for classes and functions without caring too much about name conflicts.
 ```c++
@@ -600,6 +606,9 @@ namespace MyLibrary {
 	};
 }
 ```
+上記のように名前空間の定義を行うことにより、`MyLibrary::vec2`と記述あるいは`using namespace MyLibrary`を追加することにより`vec2`タイプにアクセスできます。`vec2`のような変数名は他のライブラリなどでも使われている可能性がある一般的なものですが、これにより同一プロジェクトの中で名前が衝突することを避けることができます。
+**`using namespace`はヘッダファイルでは絶対にを追加せず、その利用は.cppファイル内だけにとどめることを推奨します**
+
 From there you can access the `vec2` type by writting `MyLibrary::vec2` or by adding a `using namespace MyLibrary`. As `vec2` might be a common choice of name in other libraries, this ensures that we won't have any issues using them in the same project.    
 **A good habit is to never add `using namespace` in a header file and leave them exclusively to the .cpp files.**
 
@@ -627,6 +636,8 @@ std::map<string,gl::Texture2d::Format>::iterator it = mTextures.begin();
 auto it = mTextures.begin();
 ```
 #####2.3. [Range-based loops.](apps/)
+C++11から追加されたとてもナイスな新機能に範囲ベースのforループがあります。範囲ベースのforループはコンテナの「範囲」のなかでイテレーションを行います。基本的に`begin()`と`end()`を持つ標準コンテナすべてがこの範囲ベースのforループで使えます。このループの動作も型インターフェイスに依存し、これまでにみたように`auto`キーワードを利用します。
+
 Another really nice new feature in C++11 are Range-Based loops. A Range-For allows you to iterate through the "range" of a container. Basically any standard container that has a `begin()` and a `end()` can be used in a Range-For. It relies on type inference as well and uses the `auto` keyword we've seen previously.  
 ```c++
 vector<float> numbers;
@@ -634,6 +645,8 @@ for( auto number : numbers ) {
 	console() << number << endl;
 }
 ```
+以下にみられるように、長い変数型名を取り扱う場合に特に便利です：
+
 Again it is especially usefull when using types with a long name: 
 ```c++
 // This long and hard to read for loop
