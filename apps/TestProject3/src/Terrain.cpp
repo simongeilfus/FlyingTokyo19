@@ -36,7 +36,6 @@ public:
 	Perlin				mPerlin;
 	
 	vector<gl::BatchRef> mScene;
-	gl::GlslProgRef		mGlslProg;
 	
 	
 	CameraPersp			mCamera;
@@ -48,23 +47,12 @@ void TestProjectApp::setup()
 	getWindow()->setAlwaysOnTop();
 	
 	// Initialize the Camera and its UI
-	mCamera = CameraPersp( getWindowWidth(), getWindowHeight(), 50.0f, 0.1f, 1000.0f );
+	mCamera = CameraPersp( getWindowWidth(), getWindowHeight(), 50.0f, 0.1f, 100.0f );
 	mCamera.lookAt( vec3(5,2,0), vec3(0) );
 	mCameraUi = CameraUi( &mCamera, getWindow(), -1 );
 	
 	// initialize ui
 	ui::initialize();
-	
-	// watch and create shader
-	wd::unwatchAll();
-	wd::watch( "fog.*", [this]( const fs::path &path ) {
-		try {
-			mGlslProg = gl::GlslProg::create( gl::GlslProg::Format().vertex( loadAsset( "fog.vert" ) ).fragment( loadAsset( "fog.frag" ) ) );
-		}
-		catch( gl::GlslProgExc exc ) {
-			console() << exc.what() << endl;
-		}
-	} );
 	
 	// noise helper
 	auto noise = [this]( const vec2 &pos ) {
@@ -97,31 +85,8 @@ void TestProjectApp::setup()
 	}
 	
 	
-	//mScene.push_back( gl::Batch::create( buildings, gl::getStockShader( gl::ShaderDef().lambert() ) ) );
-	//mScene.push_back( gl::Batch::create( geom::Sphere(), gl::getStockShader( gl::ShaderDef().lambert() ) ) );
-	
-	// Add the skybox
-	mScene.push_back( gl::Batch::create( geom::Sphere().radius( 100.0f ), gl::getStockShader( gl::ShaderDef().lambert() ) ) );
-	
-	// Add trees
-	geom::SourceMods tree;
-	for( int i = 0; i < 500; ++i ) {
-		auto treePos	= vec3( randFloat( -5.0f, 5.0f ), 0.0f, randFloat( -5.0f, 5.0f ) );
-		treePos.y		= noise( vec2( treePos.x, treePos.z ) );
-		auto treeRand	= randFloat();
-		auto treeScale	= 0.1f;
-		auto treeHeight = randFloat( 1, 4 ) * treeScale;
-		tree &= geom::Sphere().subdivisions( 1 ).radius( 1.5f * treeScale )
-		>> geom::AttribFn<vec3, vec3>( geom::POSITION, geom::POSITION, [this,treeScale,treeRand,treeHeight]( vec3 v ) {
-			auto n = v * 4.5f + vec3( treeRand );
-			return v + mPerlin.dnoise( n.x, n.y, n.z ) * 0.25f * treeScale * vec3( 2.0f, 1.0f, 2.0f );
-		} )
-		>> geom::Translate( vec3( treePos.x, treePos.y + treeHeight * 0.25f + treeHeight, treePos.z ) );
-		
-		tree &= geom::Cone().height( treeHeight ).base( 0.3f * treeScale ).subdivisionsHeight( 1 ).subdivisionsAxis( 5 ).apex( 0.2f * treeScale )
-		>> geom::Transform( glm::translate( vec3( treePos.x, treePos.y, treePos.z ) ) * glm::rotate( randFloat( 0.0f, 0.2f ), vec3( 1, 0, 0 ) ) );
-	}
-	mScene.push_back( gl::Batch::create( tree, gl::getStockShader( gl::ShaderDef().lambert() ) ) );
+	mScene.push_back( gl::Batch::create( buildings, gl::getStockShader( gl::ShaderDef().lambert() ) ) );
+	mScene.push_back( gl::Batch::create( geom::Sphere(), gl::getStockShader( gl::ShaderDef().lambert() ) ) );
 }
 
 void TestProjectApp::update()
@@ -131,31 +96,6 @@ void TestProjectApp::update()
 	bool isAlwaysOnTop = getWindow()->isAlwaysOnTop();
 	if( ui::Checkbox( "Always on top", &isAlwaysOnTop ) ) {
 		getWindow()->setAlwaysOnTop( isAlwaysOnTop );
-	}
-	
-	// update shader settings
-	{
-		ui::ScopedWindow window( "Shading" );
-		static vec3        uFogColor = vec3( 0.25, 0.29, 0.47 );
-		static float       uFogDensity = 10.0f;
-		static vec3        uSunColor = vec3( 1.0f, 0.77, 0.60 );
-		static vec3        uSunDirection = vec3( 0, 0.3f, -1.0f );
-		static float       uSunDispertion = 3.0f;
-		static float       uSunIntensity = 0.16f;
-		static vec3        uInscatteringCoeffs = vec3( 0.0f );
-		
-		ui::ColorEdit3( "Fog Color", &uFogColor[0] );
-		ui::ColorEdit3( "Sun Color", &uSunColor[0] );
-		ui::ColorEdit3( "Inscattering", &uInscatteringCoeffs[0] );
-		ui::DragFloat( "FogDensity", &uFogDensity, 0.1f, 0.0f, 100.0f );
-		
-		mGlslProg->uniform( "uFogColor", uFogColor );
-		mGlslProg->uniform( "uFogDensity", uFogDensity );
-		mGlslProg->uniform( "uSunColor", uSunColor );
-		mGlslProg->uniform( "uSunDirection", uSunDirection );
-		mGlslProg->uniform( "uSunDispertion", uSunDispertion );
-		mGlslProg->uniform( "uSunIntensity", uSunIntensity );
-		mGlslProg->uniform( "uInscatteringCoeffs", uInscatteringCoeffs );
 	}
 }
 void TestProjectApp::draw()
@@ -168,10 +108,6 @@ void TestProjectApp::draw()
 	gl::setMatrices( mCamera );
 	
 	for( const auto &sceneObject : mScene ) {
-		if( mGlslProg && sceneObject->getGlslProg() != mGlslProg ) {
-			sceneObject->replaceGlslProg( mGlslProg );
-		}
-		
 		sceneObject->draw();
 	}
 }
