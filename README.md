@@ -74,17 +74,21 @@ ___
 
 ###1. Short introduction to Cinder
 
-> [Cinderは一般的にクリエイティブコーディングとも言われる、美しさを持ったプログラミングに用いられるC++言語のライブラリです。グラフィック、オーディオ、ビデオ、計算幾何学に使われます。対応プラットフォームはOS X、Windows、iOS、WinRT。非公式ですがグラフィックスAPIのVulkanやLinux、Androidにも対応しています  
- Cinder is a C++ library for programming with aesthetic intent - the sort of development often called creative coding. This includes domains like graphics, audio, video, and computational geometry. Cinder is cross-platform, with official support for OS X, Windows, iOS, and WinRT (and wip support for Vulkan, Linux and Android).](https://libcinder.org/about)
+Cinderは一般的にクリエイティブコーディングとも言われる、美しさを持ったプログラミングに用いられるC++言語のライブラリです。グラフィック、オーディオ、ビデオ、計算幾何学に使われます。対応プラットフォームはOS X、Windows、iOS、WinRT。（非公式ですがグラフィックスAPIのVulkanやLinux、Androidにも対応しています。）
 
-> [Cinderは制作の現場で鍛えられ、プロフェッショナルがメインのツールとして使うに足るほどパワフルでありながら、学びや実験にも適しています。  
-Cinder is production-proven, powerful enough to be the primary tool for professionals, but still suitable for learning and experimentation.](https://libcinder.org/about)
+Cinderは制作の現場で鍛えられ、プロフェッショナルがメインのツールとして使うに足るほどパワフルでありながら、学びや実験にも適しています。 (https://libcinder.org/about)
+
+Cinder is a C++ library for programming with aesthetic intent - the sort of development often called creative coding. This includes domains like graphics, audio, video, and computational geometry. Cinder is cross-platform, with official support for OS X, Windows, iOS, and WinRT (and wip support for Vulkan, Linux and Android). (https://libcinder.org/about)
+
+Cinder is production-proven, powerful enough to be the primary tool for professionals, but still suitable for learning and experimentation. (https://libcinder.org/about)
 
 #####1.1. [From openFrameworks to Cinder.](apps/101 oFAppStructure/src)
-oFとCinderを比較してみると、アプリ構造においてソースファイル群がどのように組織されるかに主要な違いがあります。  
+oFとCinderを比較してみると、アプリ構造においてソースファイル群がどのように組織されるかに主要な違いがあります。
+
 If we were to compare oF and Cinder in terms of app structure, one of the main difference we could note is the way the source file(s) are organised.  
 
 oFでは`main.cpp`ファイルにアプリの導入部を記述し、`ofApp.cpp`実装ファイルにメインアプリケーションのソースコードを記述するのが一般的です。  
+
 Openframeworks use the really common approach of having a `main.cpp` file to write the entry of the application and next to it a `ofApp.h` header and a `ofApp.cpp` implementation file for the main application source code.  
 
 `main.cpp`
@@ -123,10 +127,12 @@ void ofApp::draw()
 }
 ```
 
-このような見た目や細かい違いを除けば、一般的なアプリの構造としてCinderとoFは一緒です。どちらもメインの導入部と、アプリ内のすべてのクラスが継承する`App`クラスを定義します。  
+このような見た目や細かい違いを除けば、一般的なアプリの構造としてCinderとoFは一緒です。どちらもメインの導入部と、アプリ内のすべてのクラスが継承する`App`クラスを定義します。
+
 If you forget about cosmetics and don't get too much into details both Cinder and oF work the same in terms of general app structure. They both have a main entry point and a `App` class from which all apps inherit.  
  
-ここに示すように[here a cinder app organised using oF approach to structuring the source code](apps/101 oFAppStructure/src)、どちらもコードの組織化の方法が非常に似通っています：
+ここ[（ソースファイルの構成をoFに似たアプローチで行ったCinderサンプルプロジェクト）](apps/101 oFAppStructure/src)に示すように、どちらもコードの組織化の方法が非常に似通っています：
+
 You can see [here a cinder app organised using oF approach to structuring the source code](apps/101 oFAppStructure/src). Both are extremely similar when organising the code that way :
 
 `main.cpp`
@@ -167,14 +173,16 @@ void ofApp::draw()
 }
 ```
 
-この2つのバージョンのコードはある意味非常に似通っていますが、設計上の選択として大きな違いがひとつあります。openFrameworksはノンプログラマーにも読みやすくシンプルな設計を目指しているいっぽうで、Cinderは真に標準的でモダンなC++の作法で書かれていることです。   
+この2つのバージョンのコードはある意味非常に似通ってはいますが、設計上の選択として大きな違いがひとつあります。openFrameworksはノンプログラマーにも読みやすくシンプルな設計を目指しているいっぽうで、Cinderは真に標準的でモダンなC++の作法で書かれていることです。
+
 Even if the two versions are really similar in a way, there's one striking difference and it is definitely more of a design choice than a value difference. openFrameworks seems to be designed to be simple and easy to read for non-programmers while Cinder is written using a really standard and modern form of C++.  
  
-それ自身だけでユーザーにとっての大きな使い勝手の差とはなりませんが、もうひとつ明確なことは’main’関数の実装です。oFの場合はそれをよりシンプルなものにしている（同時に「なぜ’main’関数はintを返すのか、またあんな変な引数をとるのか」といった不要な質問を避けるためと考えられますが。）のに対し、Cinderは標準的な’main’関数の書き方に準拠しています。大した違いではありませんが、より標準に準拠していることを示しています。   
+それ自身だけでユーザーにとっての大きな使い勝手の差とはなりませんが、もうひとつ明確なことは`main`関数の実装です。oFの場合はそれをよりシンプルなものにしている（同時に「なぜ`main`関数はintを返すのか、またあんな変な引数をとるのか」といった不要な質問を避けるためと考えられますが。）のに対し、Cinderは標準的な`main`関数の書き方に準拠しています。大した違いではありませんが、より標準に準拠していることを示しています。
+
 It's not a big deal, and doesn't change much for the user but another obvious thing is how the `main` function is implemented. Where oF made it much simpler (and probably avoiding unecessary questions like "why does the main function returns an int or why does it have those weird arguments") Cinder is sticking to the standard way of writing a `main` function. Not a big deal but much more standard compliant.  
  
 この件に関してC++言語の著者ビャーネ・ストロヴストルップとISOCPP（Standard C++ Foundation）は次のように述べています。ことにストロヴストルップはより厳格な意見を持っています： 
-> 「‘void main() { /* ... */ }’などという定義はC++に存在したためしはないし、もっといえばCにさえ存在しないのだ。」  
+> 「`void main() { /* ... */ }`などという定義はC++に存在したためしはないし、もっといえばCにさえ存在しないのだ。」  
 
 Here's what Bjarne Stroustrups and the ISOCPP say about this; Stroustrups is actually much more strict about it:
 > "The definition `void main() { /* ... */ }` is not and never has been C++, nor has it even been C."  
@@ -182,19 +190,26 @@ Here's what Bjarne Stroustrups and the ISOCPP say about this; Stroustrups is act
 http://www.stroustrup.com/bs_faq2.html#void-main  
 https://isocpp.org/wiki/faq/newbie#main-returns-int  
 
-**ここまでの細かい話ですが、みなさんは実際のところ気にする必要はありません。なぜならばCinderにもoFにも便利なプロジェクトジェネレーターがあり、そういったファイル構造をすべてまとめて面倒見てくれるからです。**    
+**ここまでの細かい話ですが、みなさんは実際のところ気にする必要はありません。なぜならばCinderにもoFにも便利なプロジェクトジェネレーターがあり、そういったファイル構造をすべてまとめて面倒見てくれるからです。**  
+
 **All that said I would say that we don't really have to care about this as both libraries ship with a handy project generator that takes care of generating this structure for us.**
 
 
 #####1.2. [Cinder App Structure.](apps/102 CinderAppStructure/src/CinderAppStructure.cpp)
 Cinderはソースファイルの組織化やアプリの構造化においてシンプルなアプローチを採ることができます。上記のコードは通常ひとつのファイルにまとめることができます。これにより、シンプルなアプリケーションをコードする際に複数のファイルを行ったり来たりする必要がなくなるため、よりクイックなプロトタイプ作成に役に立つと私は考えています。  
+
 Cinder has a really simple approach to structuring the source files and the app structure. The code mentionned above is usually merged into one single file. IMO this allows faster prototyping as you don't need to go back and forth between files to write a simple application.  
 
-また、  
+また、これはものごとをシンプルにし、1か所にまとめて扱うことを可能にするだけでなく、単一のgistページに格納可能なことでコードスニペットや小さなテストケースを共有することがより簡単になります（例えば、このドキュメントに含まれるスニペットの大半は、プロジェクトにコピー＆ペーストすればそのまま動きます）。
+
 It keeps things simple and centralized and makes sharing code snippets and small test cases much easier as they can live in a single gist page (for example most snippet here can be copy and pasted in any project and will work straight away).   
+
+アプリが大きくなってきた場合、私はソースをヘッダーファイルと実装ファイルに分けることがありますが、通常はこの基本の構成で満足しています。
 
 At some point when the application grows bigger I sometimes split it into a header and implementation file, but I'm usually happy with the base structure.
   
+`main`関数は便利な`CINDER_APP`マクロにラップされます。このマクロはアプリがターゲットとしているプラットフォームに応じて展開されるため、アプリ全体で必要な上記のコードを下記のように短くすることができます：
+
 The `main` function is wrapped into a handy `CINDER_APP` macro that expands to the proper version depending on the platform the app is built on. This reduces the code above to this short one for the whole app:  
 ```c++
 #include "cinder/app/App.h"
@@ -226,6 +241,8 @@ CINDER_APP( CinderApp, RendererGl )
 ```
 
 #####1.3. [App constructor, destructor and cleanup method.](apps/103 AppConstructor/src/AppConstructorApp.cpp)
+Cinderでは、アプリの構成方法、および各構成要素の初期化やクリーンナップ方法を柔軟にコントロールできます。`setup`関数をオーバライドせず、代わりにコンストラクタを使ってもまったく問題ありません：
+
 Cinder is quite flexible in terms of how you structure your app and how the different component of the app get initialized and cleaned up. Not overriding the `setup` function and using a constructor instead is totally fine:  
 ```c++
 #include "cinder/app/App.h"
@@ -250,6 +267,8 @@ AppConstructorApp::AppConstructorApp()
 }
 CINDER_APP( AppConstructorApp, RendererGl )
 ```
+
+アプリの廃棄の前にリソースを開放するために、デストラクタを利用したり、上記と同様な方法で`cleanup`メソッドをオーバーライドすることもできます：
 
 You can also use a destructor the same way or override the `cleanup` method if you need to release resources before the app destruction: 
 ```c++
@@ -290,6 +309,8 @@ CINDER_APP( AppConstructorApp, RendererGl )
 
 
 #####1.4. [App Settings.](apps/104 AppSettings/src/AppSettingsApp.cpp)
+Cinderでは、アプリを望み通りにセットアップするための一連の機能も提供しています。ウィンドウのポジション変更、フルスクリーン設定、ウィンドウタイトルの追加、などなど。これはsetupメソッド内でもアプリのコンストラクタでも使えます。
+
 Cinder also provides a series of functions to setup the app the way you want. Change the window position, set it fullscreen, add a window title, etc... It is fine to set this up in the app constructor or setup method:   
 ```c++
 void CinderApp::setup()
@@ -298,6 +319,8 @@ void CinderApp::setup()
 	setWindowSize( ivec2( 200, 20 ) );
 }
 ```
+しかし、多くの場合、特定の設定を行いそれを反映させるのはアプリが起動する前にしたいことでしょう（不要なチラつきを避けるためにも）。あるいはより適切でクリーンな方法を採りたいはずです。`CINDER_APP`マクロは3番目の引数としてprepareSetting関数を撮ります。これは独立した静的な関数として、またはlambdaで記述します。
+
 But most of the time you want to access more specific settings, want those settings to be set before the app actually starts (and avoid any unwantend flickering) or simply want to do it the proper/cleaner way. The `CINDER_APP` macro accepts a third argument that is the prepareSettings function. It can be a free-standing/static function or a lambda.  
 ```c++
 CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
@@ -306,6 +329,8 @@ CINDER_APP( AppSettings, RendererGl, []( App::Settings *settings ) {
 	settings->setResizable( false );
 })
 ```
+
+以下のコードは上記ほどコンパクトでエレガントではありませんが、静的な関数で同様なことを実現します：
 
 This is a bit less compact and elegant but it does exactly the same with a static function: 
 ```c++
@@ -388,6 +413,7 @@ CINDER_APP( AppEventsApp, RendererGl )
 
 #####1.6. [Extra flexibility with signals.](apps/106 FlexibilityWithSignals/src/FlexibilityWithSignalsApp.cpp)
 Cinderでは”signals”という仕組みを使うことでアプリケーションイベントをいっそう柔軟に処理することができます。Cinderのsignal実装は、他の言語にある同様のイベント処理のなかでも最も優れたものを取り入れています。高速であり、信頼性が高く、うまく設計されています。これを用いれば、以下のように思い通りにコードを構築できます：  
+
 Cinder offers another level of flexibility in how you deal with the app events thanks to its use of "signals". IMO Cinder's signal implementation is based on the best available out there. It is fast, reliable and well designed.  
 It allows you to structure things exactly the way you want : 
 ```c++
@@ -415,6 +441,7 @@ CINDER_APP( FlexibilityWithSignals, RendererGl )
 ```
 
 より重要なのは、同時に他のクラスにも特定のイベントをリッスンする機能を付与できるということです。これにより、コードをシンプルに、つまり短く、よりナイスにすることができるわけです。  
+
 And more importantly allows to give other classes the ability to listen to specific events. Which clearly simplify their use and makes the user code shorter and nicer.   
 ```c++
 // For example, giving a reference to the window to a CameraUI object 
@@ -424,6 +451,7 @@ mCameraUi = CameraUi( &mCamera, getWindow() );
 ```
 
 アプリ内のどこからでも、アプリ自身または特定のウィンドウが発生するシグナルを参照することができます。以下はシンプルなボタンのクラスを構成する、非常に短いコードサンプルです：   
+
 We could from anywhere in the app get a reference to the App or to the Window and use any of its signals. Here's a very short example of a simple button class :
 ```c++
 class Button {
@@ -455,7 +483,8 @@ void Button::draw()
 ```
 
 #####1.7. [Multiple Windows.](apps/107 MultipleWindow/src/MultipleWindowApp.cpp)
-アプリに同じ働きをする2つ以上のウィンドウを追加するには、コード内の任意の場所、あるいは’App::Settings::prepareWindow’のprepareSettings関数内で’createWindow’ショートカットを実行します。   
+アプリに同じ働きをする2つ以上のウィンドウを追加するには、コード内の任意の場所、あるいは`App::Settings::prepareWindow`のprepareSettings関数内で`createWindow`ショートカットを実行します。
+
 Adding more than one window to your app works the same way. You can use the `createWindow` shortcut from anywhere in your code, or do it in the prepareSettings function with `App::Settings::prepareWindow` :
 
 ```c++
@@ -489,7 +518,8 @@ CINDER_APP( MultipleWindowApp, RendererGl, []( App::Settings *settings ) {
 })
 ```
 
-‘signals’の利点はマルチウィンドウが必要な状況においてより明確になります。たとえば、通常の’draw’メソッドがどのウィンドウで実行されているのかを知るには、以下のような判定を行うことになるでしょう：  
+`signals`の利点はマルチウィンドウが必要な状況においてより明確になります。たとえば、通常の`draw`メソッドがどのウィンドウで実行されているのかを知るには、以下のような判定を行うことになるでしょう：  
+
 The use of `signals` become much more obvious in a multi-window situation. You could probably keep the usual `draw` method and test which window the method is currently drawing; like so : 
 ```c++
 void CinderApp::draw()
@@ -503,7 +533,8 @@ void CinderApp::draw()
 }
 ```
 
-‘signals’を使えばこの状況をより容易かつエレガントに解決することができます。コードも以下のように、よりクリーンなものになります：  
+`signals`を使えばこの状況をより容易かつエレガントに解決することができます。コードも以下のように、よりクリーンなものになります：  
+
 But `signals` are made to make that situation easier and more elegant, and it is definitely much cleaner to write it like this :
 ```c++
 #include "cinder/app/App.h"
@@ -537,9 +568,9 @@ CINDER_APP( MultipleWindowApp, RendererGl, []( App::Settings *settings ) {
 #####1.8. Object Oriented Design.   
 もうひとつ、CinderとProcessingやopenFrameworksのような他のライブラリとの違いはオブジェクト指向のライブラリ設計アプローチです。これまでも見てきたように、Cinderではライブラリ内においてどこでも使うことができるクラスが数多く用意されています。   
 
-Processingの’bakground’またはopenFrameworksの’ofBackground’メソッドは異なるカラーチャネルの値を示す一連のフロート型の値をとりますが、Cinderにおける同等のメソッド’gl::clear’は’Color’または’ColorA’というオブジェクトをとります。   
+Processingの`bakground`またはopenFrameworksの`ofBackground`メソッドは異なるカラーチャネルの値を示す一連のフロート型の値をとりますが、Cinderにおける同等のメソッド`gl::clear`は`Color`または`ColorA`というオブジェクトをとります。   
 
-同様に、Processingの’rect( x, y, w, h )’とopenFrameworksの’ofDrawRectangle( x, y, w, h )と同等のCinderメソッド’gl::drawSolidRect( Rectf( x1, y1, x2, y2 )’となります。（※openFrameworksには最近よりオブジェクト指向な’ofDrawRectangle(const ofRectangle &r)’メソッドが追加されたはずですが）   
+同様に、Processingの`rect( x, y, w, h )`とopenFrameworksの`ofDrawRectangle( x, y, w, h )`と同等のCinderメソッド`gl::drawSolidRect( Rectf( x1, y1, x2, y2 )`となります。（※openFrameworksには最近よりオブジェクト指向な`ofDrawRectangle(const ofRectangle &r)`メソッドが追加されたはずですが）   
 
 このようなアプローチの違いはCinderのグラフィックAPIを見ると明らかですが、OpenGL抽象化レイヤーにおいてはより明確化しています。    
 
