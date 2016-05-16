@@ -84,7 +84,7 @@ Cinder is production-proven, powerful enough to be the primary tool for professi
 oFとCinderを比較してみると、アプリ構造においてソースファイル群がどのように組織されるかに主要な違いがあります。  
 If we were to compare oF and Cinder in terms of app structure, one of the main difference we could note is the way the source file(s) are organised.  
 
-oFでは’main.cpp’ファイルにアプリの導入部を記述し、’ofApp.cpp’実装ファイルにメインアプリケーションのソースコードを記述するのが一般的です。  
+oFでは`main.cpp`ファイルにアプリの導入部を記述し、`ofApp.cpp`実装ファイルにメインアプリケーションのソースコードを記述するのが一般的です。  
 Openframeworks use the really common approach of having a `main.cpp` file to write the entry of the application and next to it a `ofApp.h` header and a `ofApp.cpp` implementation file for the main application source code.  
 
 `main.cpp`
@@ -123,10 +123,11 @@ void ofApp::draw()
 }
 ```
 
-このような見た目や細かい違いを除けば、一般的なアプリの構造としてCinderとoFは一緒です。どちらもメインの導入部と、アプリ内のすべてのクラスが継承する’App’クラスを定義します。  
+このような見た目や細かい違いを除けば、一般的なアプリの構造としてCinderとoFは一緒です。どちらもメインの導入部と、アプリ内のすべてのクラスが継承する`App`クラスを定義します。  
 If you forget about cosmetics and don't get too much into details both Cinder and oF work the same in terms of general app structure. They both have a main entry point and a `App` class from which all apps inherit.  
  
-ここに示すように|You can see [here a cinder app organised using oF approach to structuring the source code](apps/101 oFAppStructure/src). どちらもコードの組織化の方法が非常に似通っています。|Both are extremely similar when organising the code that way :
+ここに示すように[here a cinder app organised using oF approach to structuring the source code](apps/101 oFAppStructure/src)、どちらもコードの組織化の方法が非常に似通っています：
+You can see [here a cinder app organised using oF approach to structuring the source code](apps/101 oFAppStructure/src). Both are extremely similar when organising the code that way :
 
 `main.cpp`
 ```c++
