@@ -7,6 +7,8 @@
 
 #include "Simplex.h"
 
+#include "RuntimeUtils.h"
+
 #include <cereal/archives/binary.hpp>
 #include "CinderCereal.h"
 #define RUNTIME_APP_CEREALIZATION
@@ -20,37 +22,46 @@ using namespace ci::app;
 using namespace std;
 
 // Base Particle class
-
 // ParticleRef typedef
 typedef std::shared_ptr<class Particle> ParticleRef;
 
 // Particle
 class Particle {
 public:
-	static ParticleRef create( const vec2 &position );
-	Particle( const vec2 &position );
+	static ParticleRef create();
+	static ParticleRef create( const ci::vec2 &position );
+	
+	Particle(){}
+	Particle( const ci::vec2 &position );
 	
 	void draw();
 	void update();
 	void push( const ci::vec2 &force );
 	
-	vec2 getPosition() const { return mPosition; }
-	vec2 getVelocity() const { return mVelocity; }
+	float getSize() const { return mSize; }
+	ci::vec2 getPosition() const { return mPosition; }
+	ci::vec2 getVelocity() const { return mVelocity; }
 	
-	void setPosition( const vec2 &position ) { mPosition = position; }
-	void setVelocity( const vec2 &velocity ) { mVelocity = velocity; }
+	void setSize( float size ) { mSize = size; }
+	void setPosition( const ci::vec2 &position ) { mPosition = position; }
+	void setVelocity( const ci::vec2 &velocity ) { mVelocity = velocity; }
 	
 protected:
-	vec2 mPosition;
-	vec2 mVelocity;
+	float		mSize;
+	ci::vec2	mPosition;
+	ci::vec2	mVelocity;
 };
 // Particle Implementation
+ParticleRef Particle::create()
+{
+	return make_shared<Particle>();
+}
 ParticleRef Particle::create( const vec2 &position )
 {
 	return make_shared<Particle>( position );
 }
 Particle::Particle( const vec2 &position )
-: mPosition( position ), mVelocity( 0.0f )
+: mPosition( position ), mVelocity( 0.0f ), mSize( randFloat( 5.0f, 25.0f ) )
 {
 }
 void Particle::draw()
@@ -69,6 +80,55 @@ void Particle::update()
 void Particle::push( const ci::vec2 &force )
 {
 	mVelocity += force;
+}
+
+
+// ParticleRenderer
+typedef std::shared_ptr<class ParticlesRenderer> ParticlesRendererRef;
+
+class ParticlesRenderer {
+public:
+	static ParticlesRendererRef create( size_t maxParticles );
+	ParticlesRenderer( size_t maxParticles );
+	
+	void render( const std::vector<ParticleRef> &particles );
+	
+protected:
+	gl::BatchRef mBatch;
+};
+
+ParticlesRendererRef ParticlesRenderer::create( size_t maxParticles )
+{
+	return make_shared<ParticlesRenderer>( maxParticles );
+}
+
+ParticlesRenderer::ParticlesRenderer( size_t maxParticles )
+{
+	// Create an empty VBO
+	auto positionsLayout = geom::BufferLayout();
+	positionsLayout.append( geom::POSITION, 3, 0, 0 );
+	auto positionsVbo = gl::Vbo::create( GL_ARRAY_BUFFER, maxParticles * sizeof( vec3 ), nullptr, GL_STREAM_DRAW );
+	auto vboMesh	= gl::VboMesh::create( maxParticles, GL_POINTS, { { positionsLayout, positionsVbo } } );
+	
+	// Create a shader
+	auto glslProg	= gl::GlslProg::create( gl::GlslProg::Format().vertex( loadAsset( "shader.vert" ) ).fragment( loadAsset( "shader.frag" ) ) );
+	// Create a Batch with the VboMesh and the Shader
+	mBatch = gl::Batch::create( vboMesh, glslProg );
+}
+
+void ParticlesRenderer::render( const std::vector<ParticleRef> &particles )
+{
+	// Update the VboMesh
+	auto vboMesh = mBatch->getVboMesh();
+	auto mappedPosition = vboMesh->mapAttrib3f( geom::POSITION, true );
+	for( const auto &particle : particles ) {
+		*mappedPosition = vec3( particle->getPosition(), particle->getSize() );
+		++mappedPosition;
+	}
+	mappedPosition.unmap();
+	
+	// Render the batch
+	mBatch->draw( 0, particles.size() );
 }
 
 class TestProjectApp : public App {
@@ -92,28 +152,33 @@ public:
 	virtual void save( cereal::BinaryOutputArchive &ar );
 	virtual void load( cereal::BinaryInputArchive &ar );
 	
+	ParticlesRendererRef mParticlesRenderer;
 	vector<ParticleRef> mParticles;
 };
 
 
 
 void TestProjectApp::setup()
-{
+{	
 	// initialize ui
 	ui::initialize();
 	
 	// Create particles
-	for( int i = 0; i < 1000; ++i ) {
+	size_t numParticles = 10000;
+	mParticlesRenderer = ParticlesRenderer::create( numParticles );
+	for( int i = 0; i < numParticles; ++i ) {
 		vec2 pos = vec2( randFloat( 0, getWindowWidth() ), randFloat( 0, getWindowHeight() ) );
 		mParticles.push_back( Particle::create( pos ) );
 	}
+	
+	gl::enable( GL_PROGRAM_POINT_SIZE );
 }
 
 void TestProjectApp::update()
 {
 	ui::Value( "FPS", (int) getAverageFps() );
 	
-	for( auto particle : mParticles ) {
+	for( const auto &particle : mParticles ) {
 		particle->update();
 	}
 }
@@ -121,9 +186,7 @@ void TestProjectApp::draw()
 {
 	gl::clear();
 	
-	for( auto particle : mParticles ) {
-		particle->draw();
-	}
+	mParticlesRenderer->render( mParticles );
 }
 
 void TestProjectApp::mouseDown( MouseEvent event ) 
@@ -171,7 +234,8 @@ void TestProjectApp::load( cereal::BinaryInputArchive &ar )
 {
 }
 
-CINDER_RUNTIME_APP( TestProjectApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
+//CINDER_APP( TestProjectApp, RendererGl( RendererGl::Options().msaa( 8 ) ) )
+CINDER_RUNTIME_APP( TestProjectApp, RendererGl, []( App::Settings *settings ) {
 	//settings->setAlwaysOnTop();
 }
 #ifndef DISABLE_RUNTIME_COMPILATION
