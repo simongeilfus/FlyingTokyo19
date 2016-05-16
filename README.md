@@ -1,9 +1,9 @@
 # FlyingTokyo 19 : An Introduction to Cinder, Hot-Reloading and Runtime-Compiled C++
 _Japanese translation by the amazing **Teiichi Ota**_
 
-First thing first; Please clone this repository, start the install script and go grab yourself a cup of coffee (this is going to clone, build and install Cinder, Llvm, Clang, Cling and other smaller piece of code ... it is going to take a while!) :  
+ まず、このリポジトリをコピーして、インストールスクリプト（実行するとCinder、Llvm、Clang、Clingなどなどのクローン、ビルド、そしてインストールまでのすべてを行うので時間がかかりますよ！）を起動し、ひとまずコーヒーでも飲みながら完了を待ってください：
 
-まず、このリポジトリをコピーして、インストールスクリプト（実行するとCinder、Llvm、Clang、Clingなどなどのクローン、ビルド、そしてインストールまでのすべてを行うので時間がかかるのです！）を起動し、ひとまずコーヒーでも飲みながら完了を待ってください。
+First thing first; Please clone this repository, start the install script and go grab yourself a cup of coffee (this is going to clone, build and install Cinder, Llvm, Clang, Cling and other smaller piece of code ... it is going to take a while!) : 
 
 ```shell
 # First make sure that cmake is properly installed by typing "cmake" in terminal
@@ -318,7 +318,7 @@ void CinderApp::setup()
 	setWindowSize( ivec2( 200, 20 ) );
 }
 ```
-しかし、多くの場合、特定の設定を行いそれを反映させるのはアプリが起動する前にしたいことでしょう（不要なチラつきを避けるためにも）。あるいはより適切でクリーンな方法を採りたいはずです。`CINDER_APP`マクロは3番目の引数としてprepareSetting関数を撮ります。これは独立した静的な関数として、またはlambdaで記述します。
+しかし、多くの場合、特定の設定を行いそれを反映させるのはアプリが起動する前にしたいことでしょう（不要なチラつきを避けるためにも）。あるいはより適切でクリーンな方法を採りたいはずです。`CINDER_APP`マクロは3番目の引数としてprepareSetting関数をとります。これは独立した静的な関数として、またはlambdaで記述します。
 
 But most of the time you want to access more specific settings, want those settings to be set before the app actually starts (and avoid any unwantend flickering) or simply want to do it the proper/cleaner way. The `CINDER_APP` macro accepts a third argument that is the prepareSettings function. It can be a free-standing/static function or a lambda.  
 ```c++
