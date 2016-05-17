@@ -6,29 +6,28 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class RangeBasedLoopApp : public App {
-  public:
-	void setup() override;
-	void mouseDown( MouseEvent event ) override;
-	void update() override;
-	void draw() override;
+class RangeBasedLoop : public App {
+public:
+	RangeBasedLoop()
+	{
+		// Range-For allows you to iterate through the "range" of a container. 
+		// It relies on type inference as well and uses the auto keyword we've seen previously.
+		vector<int> vectorOfIntegers = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+		for( auto i : vectorOfIntegers ) {
+			console() << i << endl;
+		}
+
+		// Basically any standard container that has a begin() and a end() can be used in a Range-For.
+		// Which means that any vector, array, map, deque can be iterated that way.
+		map<string,int> mapOfIntegers = { { "ichi", 1 }, { "ni", 2 }, { "san", 3 } };
+		for( auto i : mapOfIntegers ) {
+			console() << i.first << " " << i.second << endl;
+		}
+
+		// Nothing else to see here, quit the app!
+		quit();	
+	}
+
 };
 
-void RangeBasedLoopApp::setup()
-{
-}
-
-void RangeBasedLoopApp::mouseDown( MouseEvent event )
-{
-}
-
-void RangeBasedLoopApp::update()
-{
-}
-
-void RangeBasedLoopApp::draw()
-{
-	gl::clear( Color( 0, 0, 0 ) ); 
-}
-
-CINDER_APP( RangeBasedLoopApp, RendererGl )
+CINDER_APP( RangeBasedLoop, RendererGl )
