@@ -852,7 +852,7 @@ public:
 Method chaining has nothing new or modern but is worth mentioning as it is used in a lot of places as well in Cinder. Method chaining is some sort of syntactic sugar that allows to call a series of method in a single expression or line. It can usually been seen in Cinder with setters of certain small classes. Most `Options` or `Format` classes has this syntactic sugar.  
 ```c++
 // We've seen it previously used with the `Window::Format` class, where :
-auto windowFormat0 = Window::Format().size( ivec2( 256 ) ).pos( ivec2( 0, 40 ).title( "WindowTitle" );
+auto windowFormat0 = Window::Format().size( ivec2( 256 ) ).pos( ivec2( 0, 40 ) ).title( "WindowTitle" );
 
 // Replaces the longer : 
 auto windowFormat1 = Window::Format();
@@ -862,7 +862,7 @@ windowFormat1.setTitle( "WindowTitle" );
 
 // And can of course be used as the argument of a function :
 createWindow( windowFormat1 );
-createWindow( Window::Format().size( ivec2( 256 ) ).pos( ivec2( 0, 40 ).title( "WindowTitle" ) );
+createWindow( Window::Format().size( ivec2( 256 ) ).pos( ivec2( 0, 40 ) ).title( "WindowTitle" ) );
 ``` 
 
 It is usually implemented simply by having short versions of setters methods that instead of being of the `void` type return a reference to the object itself :
