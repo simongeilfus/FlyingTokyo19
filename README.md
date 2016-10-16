@@ -815,7 +815,7 @@ C++14 complete this new class by providing the `make_unique` method:
 **shared_ptr** : Another tool and probably the most commonly used one is the `shared_ptr` class. `shared_ptrs` are used for objects that are going to be shared a lot across the application (hence *shared* in the name). Unlike a `unique_ptr`, a `shared_ptr` doesn't get released when it goes out of scope but when all the references of the object are destroyed. Or when the number of references to the object reach zero.   
 ```c++
 // When passed to this function the shared_ptr is copied and the number of reference to the object increase, but just for the duration of this function.
-void function( const shared_ptr<Object> &obj ) // obj.refcount++
+void function( shared_ptr<Object> obj ) // obj.refcount++
 {
 }  // obj.refcount--
 
